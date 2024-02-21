@@ -1,0 +1,12 @@
+{
+  "extends": [
+    "@tsconfig/strictest/tsconfig.json",
+    "@tsconfig/node21/tsconfig.json"
+  ],
+  "include": ["src", "index.tsx"],
+  "compilerOptions": {
+    "lib": ["dom"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "."
+  }
+}
