@@ -26,8 +26,10 @@ export const jsx = (
   props: JSX.Element["props"],
   ...children: JSX.Element["children"]
 ): JSX.Element => {
-  console.log(name, props, children);
+  console.debug(name, props, children);
+
   const node = document.createElement(name);
+
   if (props) {
     const { class: className, ...otherProps } = props;
     Object.assign(node, otherProps, { className });
