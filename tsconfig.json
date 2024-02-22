@@ -5,14 +5,15 @@
   ],
   "include": ["src", "index.tsx"],
   "compilerOptions": {
-    "target": "esnext",
-    "module": "nodenext",
-    "moduleResolution": "bundler",
-    //
+    // jsx
     "lib": ["dom", "esnext"],
     "jsx": "react-jsx",
     "jsxImportSource": "./src/.",
-    //
-    "verbatimModuleSyntax": true
+    // project
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "bundler",
+    "verbatimModuleSyntax": true,
+    "plugins": [{ "name": "typescript-plugin-css-modules" }]
   }
 }
