@@ -1,7 +1,13 @@
-import { mount } from "./src";
+import { atom, mount } from "./src";
 
 function App(): JSX.Element {
-  return <div>foo</div>;
+  const count = atom(0);
+  return (
+    <div>
+      {count}
+      <button onclick={() => count(count() + 1)}>increment</button>
+    </div>
+  );
 }
 
 mount(App);
