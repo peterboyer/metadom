@@ -5,8 +5,14 @@
   ],
   "include": ["src", "index.tsx"],
   "compilerOptions": {
-    "lib": ["dom"],
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "bundler",
+    //
+    "lib": ["dom", "esnext"],
     "jsx": "react-jsx",
-    "jsxImportSource": "."
+    "jsxImportSource": "./src/.",
+    //
+    "verbatimModuleSyntax": true
   }
 }
