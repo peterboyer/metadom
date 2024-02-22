@@ -11,7 +11,7 @@ declare global {
     };
     type Element = {
       _type: "element";
-      name: string;
+      name: string | Component;
       props: Record<string, string> | null;
       children: (string | Element | Atom)[];
       node: Node;
@@ -28,7 +28,8 @@ export const jsx = (
 ): JSX.Element => {
   console.debug(name, props, children);
 
-  const node = document.createElement(name);
+  const node =
+    typeof name === "string" ? document.createElement(name) : name().node;
 
   if (props) {
     const { class: className, ...otherProps } = props;
@@ -58,7 +59,7 @@ export const jsx = (
       nodeChildren.push(child);
     }
   });
-  if (nodeChildren.length) {
+  if (node instanceof Element && nodeChildren.length) {
     node.append(...nodeChildren);
   }
 
