@@ -3,18 +3,17 @@ import { listen } from "./atom";
 
 declare global {
   module JSX {
-    // type IntrinsicElements = {
-    //   [TagName in keyof HTMLElementTagNameMap]: Record<never, never>;
-    // };
     type IntrinsicElements = {
       div: Record<never, never>;
       button: { onclick: () => void };
+    } & {
+      [TagName in keyof HTMLElementTagNameMap]: Record<never, never>;
     };
     type Element = {
       _type: "element";
       name: string;
-      props: Record<string, string>;
-      children: (string | JSX.Element | Atom)[];
+      props: Record<string, string> | null;
+      children: (string | Element | Atom)[];
       node: Node;
     };
   }
@@ -23,13 +22,16 @@ declare global {
 export type Component = () => JSX.Element;
 
 export const jsx = (
-  name: string,
-  props: Record<string, string>,
-  ...children: (string | JSX.Element | Atom)[]
+  name: JSX.Element["name"],
+  props: JSX.Element["props"],
+  ...children: JSX.Element["children"]
 ): JSX.Element => {
   console.log(name, props, children);
   const node = document.createElement(name);
-  Object.assign(node, props);
+  if (props) {
+    const { class: className, ...otherProps } = props;
+    Object.assign(node, otherProps, { className });
+  }
 
   const nodeChildren: (string | Node)[] = [];
   children.forEach((child, index) => {
@@ -38,7 +40,7 @@ export const jsx = (
     }
     if (typeof child === "object" && child._type === "element") {
       nodeChildren.push(child.node);
-    } else if (typeof child === "function" && child._type === "atom") {
+    } else if (typeof child === "function") {
       const render = () => `${child()}`;
       const { result, atoms } = listen(() => render());
       atoms.forEach((atom) =>
@@ -58,7 +60,7 @@ export const jsx = (
     node.append(...nodeChildren);
   }
 
-  const element = {
+  const element: JSX.Element = {
     _type: "element" as const,
     name,
     props,
