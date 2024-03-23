@@ -1,39 +1,69 @@
-import type { Atom } from ".";
 import { listen } from "./atom";
+
+const events = ["onclick"] satisfies (keyof HTMLElement)[];
+function isEventKey(key: string): key is (typeof events)[number] {
+  return events.includes(key as any);
+}
 
 declare global {
   module JSX {
     type IntrinsicElements = {
-      div: Record<never, never>;
-      button: { onclick: () => void };
-    } & {
-      [TagName in keyof HTMLElementTagNameMap]: Record<never, never>;
+      [TagName in keyof HTMLElementTagNameMap]: {
+        id?: string;
+        class?: string;
+        onclick?: NonNullable<HTMLElement["onclick"]>;
+        [key: string]: unknown;
+      };
     };
+
     type Element = {
-      _type: "element";
-      name: string | Component;
-      props: Record<string, string> | null;
-      children: (string | Element | Atom)[];
       node: Node;
     };
   }
 }
 
+type AnyProps = Record<string, unknown>;
+type IntrinsicProps = JSX.IntrinsicElements[keyof JSX.IntrinsicElements];
+type Children = (null | JSX.Element | (() => null | JSX.Element))[];
+
 export type Component = () => JSX.Element;
 
-export const jsx = (
-  name: JSX.Element["name"],
-  props: JSX.Element["props"],
-  ...children: JSX.Element["children"]
-): JSX.Element => {
-  console.debug(name, props, children);
+type JSXArgs = JSXArgs.Intrinsic | JSXArgs.Function;
+namespace JSXArgs {
+  export type Intrinsic = [
+    tag: string,
+    props: IntrinsicProps | null,
+    ...children: Children,
+  ];
+  export type Function = [
+    tag: (props: AnyProps) => JSX.Element,
+    props: AnyProps | null,
+    ...children: Children,
+  ];
+}
 
-  const node =
-    typeof name === "string" ? document.createElement(name) : name().node;
+export const jsx = (...args: JSXArgs): JSX.Element => {
+  console.debug("jsx", args);
 
-  if (props) {
-    const { class: className, ...otherProps } = props;
-    Object.assign(node, otherProps, { className });
+  let node: Node;
+  const [, , ...children] = args;
+  if (typeof args[0] === "string") {
+    const [tag, props] = args as JSXArgs.Intrinsic;
+    node = document.createElement(tag);
+    if (props) {
+      for (const key in props) {
+        if (isEventKey(key)) {
+          const type = key.substring(2);
+          const callback = props[key];
+          if (callback) {
+            node.addEventListener(type, callback as any);
+          }
+        }
+      }
+    }
+  } else {
+    const [tag, props] = args as JSXArgs.Function;
+    node = tag(props ?? {}).node;
   }
 
   const nodeChildren: (string | Node)[] = [];
@@ -41,7 +71,7 @@ export const jsx = (
     if (child === null) {
       return;
     }
-    if (typeof child === "object" && child._type === "element") {
+    if (typeof child === "object") {
       nodeChildren.push(child.node);
     } else if (typeof child === "function") {
       const render = () => `${child()}`;
@@ -63,13 +93,7 @@ export const jsx = (
     node.append(...nodeChildren);
   }
 
-  const element: JSX.Element = {
-    _type: "element" as const,
-    name,
-    props,
-    children,
+  return {
     node,
   };
-
-  return element;
 };
