@@ -3,7 +3,7 @@
     "@tsconfig/strictest/tsconfig.json",
     "@tsconfig/node21/tsconfig.json"
   ],
-  "include": ["src", "index.tsx"],
+  "include": ["src", "index.tsx", "index.*.tsx"],
   "compilerOptions": {
     // jsx
     "lib": ["dom", "esnext"],
