@@ -1,19 +1,21 @@
 {
-  "extends": [
-    "@tsconfig/strictest/tsconfig.json",
-    "@tsconfig/node21/tsconfig.json"
-  ],
-  "include": ["src", "index.tsx", "index.*.tsx"],
-  "compilerOptions": {
-    // jsx
-    "lib": ["dom", "esnext"],
-    "jsx": "react-jsx",
-    "jsxImportSource": "./src/.",
-    // project
-    "target": "esnext",
-    "module": "nodenext",
-    "moduleResolution": "bundler",
-    "verbatimModuleSyntax": true,
-    "plugins": [{ "name": "typescript-plugin-css-modules" }]
-  }
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"extends": [
+		"@tsconfig/strictest/tsconfig.json",
+		"@tsconfig/node21/tsconfig.json"
+	],
+	"include": ["src", "index.tsx", "index.*.tsx"],
+	"compilerOptions": {
+		"noEmit": true,
+		// jsx
+		"lib": ["dom", "esnext"],
+		"jsx": "react-jsx",
+		"jsxImportSource": "./src/.",
+		// project
+		"target": "esnext",
+		"module": "ES2022",
+		"moduleResolution": "node10",
+		"verbatimModuleSyntax": true,
+		"plugins": [{ "name": "typescript-plugin-css-modules" }]
+	}
 }
