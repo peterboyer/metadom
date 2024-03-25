@@ -1,15 +1,18 @@
 {
-  "type": "module",
-  "license": "MIT",
-  "scripts": {
-    "dev": "vite --host"
-  },
-  "devDependencies": {
-    "@tsconfig/node21": "^21.0.1",
-    "@tsconfig/strictest": "^2.0.3",
-    "prettier": "^3.2.5",
-    "typescript": "^5.4.3",
-    "typescript-plugin-css-modules": "^5.1.0",
-    "vite": "^5.2.3"
-  }
+	"type": "module",
+	"license": "MIT",
+	"scripts": {
+		"dev": "vite --host"
+	},
+	"devDependencies": {
+		"@tsconfig/node21": "^21.0.1",
+		"@tsconfig/strictest": "^2.0.3",
+		"prettier": "^3.2.5",
+		"typescript": "^5.4.3",
+		"typescript-plugin-css-modules": "^5.1.0",
+		"vite": "^5.2.3"
+	},
+	"prettier": {
+		"useTabs": true
+	}
 }
