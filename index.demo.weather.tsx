@@ -1,7 +1,7 @@
-import { $, atom } from "./src";
+import { Atom } from "./src";
 
-export function Weather(): JSX.Element {
-	const state = atom<
+export function Weather(): Element {
+	const state = Atom<
 		| { _type: "Ready" }
 		| { _type: "Loading" }
 		| { _type: "Error"; message: string }
@@ -23,7 +23,7 @@ export function Weather(): JSX.Element {
 
 	return (
 		<div>
-			<pre>{$(() => JSON.stringify(state(), undefined, 2))}</pre>
+			<pre>{() => JSON.stringify(state(), undefined, 2)}</pre>
 			<div>
 				<button onclick={onFetch}>fetch</button>
 			</div>

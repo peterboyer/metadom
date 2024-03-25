@@ -1,10 +1,10 @@
-import { atom, mount, $ } from "./src";
+import { Atom, mount } from "./src/index";
 
 import { Counter } from "./index.demo.counter";
 import { Weather } from "./index.demo.weather";
 
-function App(): JSX.Element {
-	const demo = atom<"counter" | "weather">("counter", { name: "demo" });
+function App(): Element {
+	const demo = Atom<"counter" | "weather">("counter", { name: "demo" });
 
 	return (
 		<main>
@@ -14,7 +14,7 @@ function App(): JSX.Element {
 					type="radio"
 					name="demo"
 					id="demoCounter"
-					value={$(() => demo() === "counter")}
+					value={() => demo() === "counter"}
 					value:change={() => demo("counter")}
 				/>
 				<label for="demoCounter">Counter</label>
@@ -22,13 +22,13 @@ function App(): JSX.Element {
 					type="radio"
 					name="demo"
 					id="demoWeather"
-					value={$(() => demo() === "weather")}
+					value={() => demo() === "weather"}
 					value:change={() => demo("weather")}
 				/>
 				<label for="demoWeather">Weather</label>
 			</fieldset>
-			{$(() => demo() === "counter" && <Counter />)}
-			{$(() => demo() === "weather" && <Weather />)}
+			{() => demo() === "counter" && <Counter />}
+			{() => demo() === "weather" && <Weather />}
 		</main>
 	);
 }

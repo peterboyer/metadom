@@ -2,44 +2,52 @@
 // atoms when called must return their value, no wrappers
 // atoms when changed will trigger their reactive subscribers
 
-export type Atom<T = unknown> = ((...args: [] | [nextValue: T]) => T) & {
-	$atom: {
-		value: T;
-		callbacks: Set<() => void>;
-		name?: string | undefined;
-	};
-};
+export interface Atom<T = unknown> {
+	/**
+	 * Getter.
+	 */
+	(): T;
+
+	/**
+	 * Setter.
+	 */
+	(nextValue: T | ((prevValue: T) => T)): T;
+
+	value: T;
+	callbacks: Set<() => void>;
+	title?: string | undefined;
+}
 
 let onAtom: undefined | ((atom: Atom) => void) = undefined;
 
-export const atom = <T>(
-	initialValue: T,
-	options?: { name?: string },
-): Atom<T> => {
-	const atom: Atom<T> = Object.assign(
-		(...args: [] | [nextValue: T]) => {
-			if (args.length) {
-				// write
-				const [nextValue] = args;
-				atom.$atom.value = nextValue;
-				// Dereference current set of callbacks to avoid infinite recursion.
-				Array.from(atom.$atom.callbacks).forEach((callback) => callback());
+export function Atom<T>(initialValue: T, options?: { name?: string }): Atom<T> {
+	const atom: Atom<T> = (
+		...args: [] | [nextValue: T | ((prevValue: T) => T)]
+	) => {
+		if (!args.length) {
+			// read
+			onAtom?.(atom as Atom<unknown>);
+		} else {
+			// write
+			const [nextValue] = args;
+			if (typeof nextValue === "function") {
+				const nextValue_unsafe = nextValue as (prevValue: T) => T;
+				atom.value = nextValue_unsafe(atom.value);
 			} else {
-				// read
-				onAtom?.(atom as Atom<unknown>);
+				atom.value = nextValue;
 			}
-			return atom.$atom.value;
-		},
-		{
-			$atom: {
-				value: initialValue,
-				callbacks: new Set<() => void>(),
-				name: options?.name,
-			},
-		},
-	);
+			// Dereference current set of callbacks to avoid infinite recursion.
+			Array.from(atom.callbacks).forEach((callback) => callback());
+		}
+		return atom.value;
+	};
+
+	atom.value = initialValue;
+	atom.callbacks = new Set<() => void>();
+	atom.title = options?.name;
+
 	return atom;
-};
+}
 
 type Disposer = () => void;
 
@@ -49,7 +57,7 @@ export function reaction<T>(
 ): Disposer {
 	const atoms = new Set<Atom>();
 	const disposer = () => {
-		atoms.forEach((atom) => atom.$atom.callbacks.delete(evaluate));
+		atoms.forEach((atom) => atom.callbacks.delete(evaluate));
 		atoms.clear();
 	};
 
@@ -62,7 +70,7 @@ export function reaction<T>(
 
 		callback?.(result);
 
-		atoms.forEach((atom) => atom.$atom.callbacks.add(evaluate));
+		atoms.forEach((atom) => atom.callbacks.add(evaluate));
 	};
 
 	evaluate();

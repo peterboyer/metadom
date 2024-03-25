@@ -1,19 +1,19 @@
-import { $, atom } from "./src";
+import { Atom } from "./src";
 
-export function Counter(): JSX.Element {
-	const count = atom(0, { name: "count" });
+export function Counter(): Element {
+	const count = Atom(0, { name: "count" });
 
 	return (
 		<div>
 			<dl>
 				<dt>Count</dt>
-				<dd>{$(() => count())}</dd>
+				<dd>{count}</dd>
 				<dt>Count * 10</dt>
-				<dd>{$(() => count() * 10)}</dd>
+				<dd>{() => count() * 10}</dd>
 			</dl>
 			<div>
-				<button onclick={() => count(count() + 1)}>increment</button>
-				<button onclick={() => count(count() - 1)}>decrement</button>
+				<button onclick={() => count((a) => a + 1)}>increment</button>
+				<button onclick={() => count((a) => a - 1)}>decrement</button>
 			</div>
 		</div>
 	);

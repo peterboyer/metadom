@@ -1,12 +1,9 @@
 import { reaction } from "./atom";
-import { isReactor, type Reactor } from "./reactor";
 
 const events = ["onclick"] satisfies (keyof HTMLElement)[];
 function isEventKey(key: string): key is (typeof events)[number] {
 	return events.includes(key as any);
 }
-
-type _Element = Element;
 
 declare global {
 	module JSX {
@@ -15,18 +12,17 @@ declare global {
 				id?: string;
 				class?: string;
 				onclick?: NonNullable<HTMLElement["onclick"]>;
-				[key: string]: unknown;
 			};
 		} & {
+			label: {
+				for: string;
+			};
 			input: {
 				type: "radio";
-				value: boolean | Reactor<boolean>;
-				"value:change": (value: boolean) => unknown;
+				name: string;
+				value?: boolean;
+				"value:change"?: (value: boolean) => unknown;
 			};
-		};
-
-		type Element = {
-			node: _Element;
 		};
 	}
 }
@@ -34,7 +30,7 @@ declare global {
 type AnyProps = Record<string, unknown>;
 type IntrinsicProps = JSX.IntrinsicElements[keyof JSX.IntrinsicElements];
 
-export type Component = () => JSX.Element;
+export type Component = () => Element;
 
 type JSXArgs = JSXArgs.Intrinsic | JSXArgs.Function;
 namespace JSXArgs {
@@ -44,10 +40,18 @@ namespace JSXArgs {
 		...children: unknown[],
 	];
 	export type Function = [
-		tag: (props: AnyProps) => JSX.Element,
+		tag: (props: AnyProps) => Element,
 		props: AnyProps | null,
 		...children: unknown[],
 	];
+}
+
+type ElementData = { change?: (...args: any[]) => void };
+const Elements = new Map<Element, ElementData>();
+function getElementData(element: Element): ElementData {
+	let data = Elements.get(element);
+	if (!data) Elements.set(element, (data = {}));
+	return data;
 }
 
 function setElementProp(element: Element, key: string, value: unknown): void {
@@ -57,50 +61,58 @@ function setElementProp(element: Element, key: string, value: unknown): void {
 			element.addEventListener(type, value as any);
 		}
 	} else if (key === "for") {
-		// @ts-ignore TODO: Fix this.
-		element.htmlFor = value;
+		if (element instanceof HTMLLabelElement) {
+			element.htmlFor = `${value}`;
+		}
 	} else if (key === "value") {
-		if (element.type === "radio") {
-			element.checked = value;
+		if (element instanceof HTMLInputElement) {
+			if (element.type === "radio") {
+				element.checked = !!value;
+			}
 		}
 	} else if (key === "value:change") {
-		if (element.type === "radio") {
-			element.removeEventListener("change", element.changeCb);
-			element.changeCb = (e) => {
-				console.log(e.target.id, e.target.value, e.target);
-				value(e.target.value);
+		if (element instanceof HTMLInputElement) {
+			const data = getElementData(element);
+			if (data.change) {
+				element.removeEventListener("change", data.change);
+			}
+			const callback = (event: HTMLElementEventMap["change"]) => {
+				const value_unsafe = value as (value: unknown) => void;
+				value_unsafe((event.target! as typeof element).checked);
 			};
-			element.addEventListener("change", element.changeCb);
+			element.addEventListener("change", callback);
+			data.change = callback;
 		}
 	} else {
-		// @ts-ignore TODO: Fix this.
-		element[key] = value;
+		(element as any)[key] = value;
 	}
 }
 
-export const jsx = (...args: JSXArgs): JSX.Element => {
+export const jsx = (...args: JSXArgs): Element => {
 	console.debug(args);
-	let parent: Element;
+	let element: Element;
 	const [, , ...children] = args;
 	if (typeof args[0] === "string") {
 		const [tag, props] = args as JSXArgs.Intrinsic;
-		parent = document.createElement(tag);
+		element = document.createElement(tag);
 		if (props) {
 			for (const key in props) {
 				const value = props[key];
-				if (isReactor(value)) {
-					reaction(
-						() => value.$(),
-						(value) => setElementProp(parent, key, value),
+				if (key.endsWith("$")) {
+					const keyReal = key.substring(0, key.length - 1);
+					const value_unsafe = value as () => void;
+					const _disposer = reaction(
+						() => value_unsafe(),
+						(value) => setElementProp(element, keyReal, value),
 					);
 				} else {
-					setElementProp(parent, key, value);
+					setElementProp(element, key, value);
 				}
 			}
 		}
 	} else {
 		const [tag, props] = args as JSXArgs.Function;
-		parent = tag(props ?? {}).node;
+		element = tag(props ?? {});
 	}
 
 	children.forEach((child, index) => {
@@ -111,26 +123,23 @@ export const jsx = (...args: JSXArgs): JSX.Element => {
 		} else if (typeof child === "boolean") {
 			return;
 		} else if (typeof child === "number") {
-			parent.append(child.toString());
+			element.append(child.toString());
 		} else if (typeof child === "string") {
-			parent.append(child);
-		} else if (
-			typeof child === "object" &&
-			"node" in child &&
-			child.node instanceof Node
-		) {
-			parent.append(child.node);
-		} else if (isReactor(child)) {
-			reaction(
-				() => child.$(),
+			element.append(child);
+		} else if (child instanceof Element) {
+			element.append(child);
+		} else if (typeof child === "function") {
+			const _disposer = reaction(
+				() => child() as unknown,
 				(value) => {
 					const resultFormatted = format(value) ?? "";
-					const currentNode = parent.childNodes[index];
+					const currentNode = element.childNodes[index];
 					if (!currentNode) {
-						parent.append(resultFormatted);
+						element.append(resultFormatted);
 					} else if (resultFormatted) {
 						currentNode.replaceWith(resultFormatted);
 					} else {
+						// _disposer()
 						currentNode.remove();
 					}
 				},
@@ -138,10 +147,10 @@ export const jsx = (...args: JSXArgs): JSX.Element => {
 		}
 	});
 
-	return { node: parent };
+	return element;
 };
 
-function format(value: unknown): undefined | string | Node {
+function format(value: unknown): undefined | string | Element {
 	if (value === undefined) {
 		return undefined;
 	} else if (value === null) {
@@ -152,12 +161,8 @@ function format(value: unknown): undefined | string | Node {
 		return value.toString();
 	} else if (typeof value === "string") {
 		return value;
-	} else if (
-		typeof value === "object" &&
-		"node" in value &&
-		value.node instanceof Node
-	) {
-		return value.node;
+	} else if (value instanceof Element) {
+		return value;
 	}
 	return undefined;
 }
