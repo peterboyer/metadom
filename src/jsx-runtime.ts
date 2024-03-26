@@ -31,6 +31,7 @@ declare global {
 		};
 
 		type Element = Node;
+		type ElementClass = never;
 		type Component = () => JSX.Element;
 	}
 }
