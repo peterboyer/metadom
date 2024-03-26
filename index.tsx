@@ -3,7 +3,7 @@ import { Atom, mount } from "./src/index";
 import { Counter } from "./index.demo.counter";
 import { Weather } from "./index.demo.weather";
 
-function App(): Element {
+function App(): JSX.Element {
 	const demo = Atom<"counter" | "weather">("counter", { name: "demo" });
 
 	return (
@@ -15,7 +15,7 @@ function App(): Element {
 					name="demo"
 					id="demoCounter"
 					value={() => demo() === "counter"}
-					value:change={() => demo("counter")}
+					onchangevalue={() => demo("counter")}
 				/>
 				<label for="demoCounter">Counter</label>
 				<input
@@ -23,7 +23,7 @@ function App(): Element {
 					name="demo"
 					id="demoWeather"
 					value={() => demo() === "weather"}
-					value:change={() => demo("weather")}
+					onchangevalue={() => demo("weather")}
 				/>
 				<label for="demoWeather">Weather</label>
 			</fieldset>

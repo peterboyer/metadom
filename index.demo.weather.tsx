@@ -1,6 +1,6 @@
 import { Atom } from "./src";
 
-export function Weather(): Element {
+export function Weather(): JSX.Element {
 	const state = Atom<
 		| { _type: "Ready" }
 		| { _type: "Loading" }

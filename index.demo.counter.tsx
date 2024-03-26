@@ -1,6 +1,6 @@
 import { Atom } from "./src";
 
-export function Counter(): Element {
+export function Counter(): JSX.Element {
 	const count = Atom(0, { name: "count" });
 
 	return (
