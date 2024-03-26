@@ -1,4 +1,4 @@
-import { Atom, mount } from "./src/index";
+import { mount, Atom } from "./src/index";
 
 import { Counter } from "./index.demo.counter";
 import { Weather } from "./index.demo.weather";
