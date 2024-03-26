@@ -1,2 +1,2 @@
 export { mount } from "./jsx";
-export { Atom } from "./atom";
+export { Atom, reaction } from "./atom";
