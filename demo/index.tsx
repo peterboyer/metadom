@@ -17,22 +17,18 @@ function App(): JSX.Element {
 		<main>
 			<fieldset>
 				<legend>Demo</legend>
-				<input
-					type="radio"
-					name="demo"
-					id="demoCounter"
-					value={() => demo() === "counter"}
-					onchangevalue={() => demo("counter")}
-				/>
-				<label for="demoCounter">Counter</label>
-				<input
-					type="radio"
-					name="demo"
-					id="demoWeather"
-					value={() => demo() === "weather"}
-					onchangevalue={() => demo("weather")}
-				/>
-				<label for="demoWeather">Weather</label>
+				{(["counter", "weather"] as const).map((name) => (
+					<>
+						<input
+							type="radio"
+							name={name}
+							id={`radio-${name}`}
+							value={() => demo() === name}
+							onchangevalue={() => demo(name)}
+						/>
+						<label for={`radio-${name}`}>{name}</label>
+					</>
+				))}
 			</fieldset>
 			{() => demo() === "counter" && <Counter />}
 			{() => demo() === "weather" && <Weather />}

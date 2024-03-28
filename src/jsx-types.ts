@@ -4,6 +4,7 @@ declare global {
 	module JSX {
 		type IntrinsicElements = {
 			div: Attributes;
+			span: Attributes;
 			main: Attributes;
 			dl: Attributes;
 			dt: Attributes;

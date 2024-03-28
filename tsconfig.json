@@ -11,6 +11,7 @@
 		"lib": ["dom", "dom.iterable", "esnext"],
 		"jsx": "react-jsx",
 		"jsxImportSource": "../src/.",
+		"jsxFragmentFactory": "jsx.Fragment",
 		// project
 		"target": "esnext",
 		"module": "ES2022",
