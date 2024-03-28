@@ -1,4 +1,4 @@
-import { Atom } from "./src";
+import { Atom } from "@";
 
 export function Weather(): JSX.Element {
 	const state = Atom<

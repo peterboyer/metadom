@@ -3,7 +3,13 @@ export {};
 declare global {
 	module JSX {
 		type IntrinsicElements = {
+			div: Attributes;
 			main: Attributes;
+			dl: Attributes;
+			dt: Attributes;
+			dd: Attributes;
+			pre: Attributes;
+			button: Attributes;
 			fieldset: Attributes;
 			legend: Attributes;
 			label: LabelAttributes;

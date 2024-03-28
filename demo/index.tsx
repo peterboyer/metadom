@@ -1,7 +1,7 @@
-import { mount, Atom, reaction } from "./src/index";
+import { mount, Atom, reaction } from "@";
 
-import { Counter } from "./index.demo.counter";
-import { Weather } from "./index.demo.weather";
+import { Counter } from "./counter";
+import { Weather } from "./weather";
 
 function App(): JSX.Element {
 	const locationHash_unsafe = (location.hash.substring(1) as any) || undefined;

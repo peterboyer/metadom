@@ -1,7 +1,3 @@
-// anything reactive must be a callback in jsx
-// atoms when called must return their value, no wrappers
-// atoms when changed will trigger their reactive subscribers
-
 export interface Atom<T = unknown> {
 	/**
 	 * Getter.
