@@ -3,11 +3,13 @@ import { mount, Atom, reaction } from "@";
 import { Counter } from "./counter";
 import { Weather } from "./weather";
 
+type Mode = "counter" | "weather";
+
 function App(): JSX.Element {
-	const locationHash_unsafe = (location.hash.substring(1) as any) || undefined;
-	const demo = Atom<"counter" | "weather">(locationHash_unsafe ?? "counter");
+	const locationHash_unsafe = (location.hash.substring(1) as Mode) || undefined;
+	const mode = Atom<Mode>(locationHash_unsafe ?? "counter");
 	reaction(
-		() => demo(),
+		() => mode(),
 		(value) => {
 			location.hash = value;
 		},
@@ -17,21 +19,26 @@ function App(): JSX.Element {
 		<main>
 			<fieldset>
 				<legend>Demo</legend>
-				{(["counter", "weather"] as const).map((name) => (
+				{Array.from(
+					new Map<Mode, string>([
+						["counter", "Counter"],
+						["weather", "Weather"],
+					]),
+				).map(([name, title]) => (
 					<>
 						<input
 							type="radio"
 							name={name}
 							id={`radio-${name}`}
-							value={() => demo() === name}
-							onchangevalue={() => demo(name)}
+							value={() => mode() === name}
+							onchangevalue={() => mode(name)}
 						/>
-						<label for={`radio-${name}`}>{name}</label>
+						<label for={`radio-${name}`}>{title}</label>
 					</>
 				))}
 			</fieldset>
-			{() => demo() === "counter" && <Counter />}
-			{() => demo() === "weather" && <Weather />}
+			{() => mode() === "counter" && <Counter />}
+			{() => mode() === "weather" && <Weather />}
 		</main>
 	);
 }
