@@ -9,17 +9,22 @@
 		"noEmit": true,
 		// jsx
 		"lib": ["dom", "dom.iterable", "esnext"],
+
 		"jsx": "react-jsx",
-		"jsxImportSource": "../src/.",
+		"jsxImportSource": "@jsx",
 		"jsxFragmentFactory": "jsx.Fragment",
+
+		"baseUrl": ".",
+		"paths": {
+			"@": ["src/index.ts"],
+			"@jsx/*": ["src/*"]
+		},
+
 		// project
 		"target": "esnext",
 		"module": "ES2022",
 		"moduleResolution": "node10",
 		"verbatimModuleSyntax": true,
-		"plugins": [{ "name": "typescript-plugin-css-modules" }],
-		"paths": {
-			"@": ["./src/index.ts"]
-		}
+		"plugins": [{ "name": "typescript-plugin-css-modules" }]
 	}
 }

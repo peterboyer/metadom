@@ -4,13 +4,14 @@ export default defineConfig({
 	root: "demo",
 	resolve: {
 		alias: {
-			"@": "../src/index.ts",
+			"@": new URL("./src", import.meta.url).pathname,
 		},
 	},
 	esbuild: {
 		jsx: "transform",
-		jsxImportSource: ".",
-		jsxInject: `import { jsx } from '../src/jsx-runtime'`,
+		jsxDev: false,
+		jsxImportSource: "@",
+		jsxInject: `import { jsx } from "@/jsx-runtime";`,
 		jsxFactory: "jsx",
 	},
 });
