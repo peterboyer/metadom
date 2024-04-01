@@ -63,9 +63,10 @@ export function reaction<T>(
 	const evaluate = () => {
 		disposer();
 
+		const onSignal_reset = onSignal;
 		onSignal = (signal) => signals.add(signal);
 		const result = fn();
-		onSignal = undefined;
+		onSignal = onSignal_reset;
 
 		callback?.(result);
 
