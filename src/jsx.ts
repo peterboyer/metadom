@@ -144,8 +144,8 @@ function setElementAttribute(node: Node, key: string, value: unknown): void {
 	}
 }
 
-export function mount(component: JSX.Component): Node {
-	const element = component();
+export function mount(element: Element, component: unknown): Node {
+	walk(element, component);
 	document.body.append(element);
 	return element;
 }

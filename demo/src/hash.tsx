@@ -1,11 +1,11 @@
-import { mount, Atom, reaction } from "@";
+import { Atom, reaction } from "@";
 
-import { Counter } from "./counter";
-import { Weather } from "./weather";
+import { Counter } from "./hash/counter";
+import { Weather } from "./hash/weather";
 
 type Mode = "counter" | "weather";
 
-function App(): JSX.Element {
+export function Hash(): JSX.Element {
 	const locationHash_unsafe = (location.hash.substring(1) as Mode) || undefined;
 	const mode = Atom<Mode>(locationHash_unsafe ?? "counter");
 	reaction(
@@ -42,5 +42,3 @@ function App(): JSX.Element {
 		</main>
 	);
 }
-
-mount(App);
