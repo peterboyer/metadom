@@ -1,4 +1,4 @@
-import { location } from "./jsx";
+import * as routing from "./routing";
 import { reaction } from "./signal";
 
 export type RouteProps = {
@@ -8,8 +8,8 @@ export type RouteProps = {
 
 export function Route({ path, element }: RouteProps): JSX.Element {
 	reaction(
-		() => location.pathname(),
+		() => routing.url().pathname,
 		(pathname) => console.log({ pathname }),
 	);
-	return <>{() => location.pathname() === path && element()}</>;
+	return <>{() => routing.url().pathname === path && element()}</>;
 }

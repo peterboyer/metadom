@@ -1,4 +1,5 @@
-import { Signal, reaction } from "./signal";
+import { reaction } from "./signal";
+import * as routing from "./routing";
 import type { Disposer } from "./disposer";
 
 type IntrinsicElementTag = string;
@@ -119,10 +120,6 @@ function getNodeData(node: Node): NodeData {
 	return data;
 }
 
-export const location = {
-	pathname: Signal(globalThis.location.pathname),
-};
-
 function setElementAttribute(node: Node, key: string, value: unknown): void {
 	if (key === "for") {
 		if (node instanceof HTMLLabelElement) {
@@ -140,8 +137,7 @@ function setElementAttribute(node: Node, key: string, value: unknown): void {
 				}
 				const callback = (event: HTMLElementEventMap["click"]) => {
 					event.preventDefault();
-					history.pushState({}, "", node.href);
-					location.pathname(new URL(node.href).pathname);
+					routing.push(node.href);
 				};
 				node.addEventListener("click", callback);
 				data.handlers.change = callback;

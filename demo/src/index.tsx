@@ -1,4 +1,4 @@
-import { mount, Route } from "@";
+import { mount, routing } from "@";
 
 import { Home } from "./home";
 import { Hash } from "./hash";
@@ -6,8 +6,8 @@ import { Hash } from "./hash";
 function App(): JSX.Element {
 	return (
 		<>
-			<Route path="/" element={() => <Home />} />
-			<Route path="/hash" element={() => <Hash />} />
+			{() => routing.url().pathname === "/" && <Home />}
+			{() => routing.url().pathname === "/hash" && <Hash />}
 		</>
 	);
 }
