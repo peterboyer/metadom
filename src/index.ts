@@ -1,3 +1,3 @@
 export { mount } from "./jsx";
-export { Atom, reaction } from "./atom";
+export { Signal, reaction } from "./signal";
 export { Route } from "./route";

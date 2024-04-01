@@ -1,4 +1,4 @@
-import { reaction } from "./atom";
+import { reaction } from "./signal";
 import type { Disposer } from "./disposer";
 
 type IntrinsicElementTag = string;

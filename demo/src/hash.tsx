@@ -1,4 +1,4 @@
-import { Atom, reaction } from "@";
+import { Signal, reaction } from "@";
 
 import { Counter } from "./hash/counter";
 import { Weather } from "./hash/weather";
@@ -7,7 +7,7 @@ type Mode = "counter" | "weather";
 
 export function Hash(): JSX.Element {
 	const locationHash_unsafe = (location.hash.substring(1) as Mode) || undefined;
-	const mode = Atom<Mode>(locationHash_unsafe ?? "counter");
+	const mode = Signal<Mode>(locationHash_unsafe ?? "counter");
 	reaction(
 		() => mode(),
 		(value) => {

@@ -1,6 +1,6 @@
-import { Atom } from "./atom";
+import { Signal } from "./signal";
 
-const pathname = Atom(location.pathname);
+const pathname = Signal(location.pathname);
 
 export type RouteProps = {
 	path: string;

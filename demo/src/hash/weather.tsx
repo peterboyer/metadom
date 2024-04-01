@@ -1,7 +1,7 @@
-import { Atom } from "@";
+import { Signal } from "@";
 
 export function Weather(): JSX.Element {
-	const state = Atom<
+	const state = Signal<
 		| { _type: "Ready" }
 		| { _type: "Loading" }
 		| { _type: "Error"; message: string }

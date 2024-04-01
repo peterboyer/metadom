@@ -1,7 +1,7 @@
-import { Atom } from "@";
+import { Signal } from "@";
 
 export function Counter(): JSX.Element {
-	const count = Atom(0, { name: "count" });
+	const count = Signal(0, { name: "count" });
 
 	return (
 		<div>
