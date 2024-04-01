@@ -1,2 +1,2 @@
 node:20
-PORT=5173 dev
+PORT=5173 yarn dev
