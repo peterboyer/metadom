@@ -177,17 +177,21 @@ function setElementAttribute(node: Node, key: string, value: unknown): void {
 	}
 }
 
-export function mount(elementOrId: Element | string, component: unknown): Node {
-	const element =
-		typeof elementOrId === "string"
-			? document.getElementById(elementOrId)
-			: elementOrId;
-	if (!element) {
-		throw new Error(`getElementById("${elementOrId}") returned null.`);
+export function mount(
+	component: unknown,
+	elementOrId?: Element | string,
+): void {
+	if (elementOrId === undefined) {
+		walk(document.body, component);
+	} else if (typeof elementOrId === "string") {
+		const element = document.getElementById(elementOrId);
+		if (!element) {
+			throw new Error(`Could not find element with id="${elementOrId}".`);
+		}
+		walk(element, component);
+	} else {
+		walk(elementOrId, component);
 	}
-	walk(element, component);
-	document.body.append(element);
-	return element;
 }
 
 export function unmount(node: Node) {

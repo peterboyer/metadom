@@ -12,4 +12,4 @@ function App(): JSX.Element {
 	);
 }
 
-mount("app", <App />);
+mount(<App />);
