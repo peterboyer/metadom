@@ -1,15 +1,8 @@
 import type { Disposer } from "./disposer";
 
 export interface Signal<T = unknown> {
-	/**
-	 * Getter.
-	 */
-	(): T;
-
-	/**
-	 * Setter.
-	 */
-	(nextValue: T | ((prevValue: T) => T)): T;
+	/* get */ (): T;
+	/* set */ (nextValue: T | ((prevValue: T) => T)): T;
 
 	value: T;
 	callbacks: Set<() => void>;
@@ -18,10 +11,7 @@ export interface Signal<T = unknown> {
 
 let onSignal: undefined | ((signal: Signal) => void) = undefined;
 
-export function Signal<T>(
-	initialValue: T,
-	options?: { name?: string },
-): Signal<T> {
+export function Signal<T>(initialValue: T): Signal<T> {
 	const signal: Signal<T> = (
 		...args: [] | [nextValue: T | ((prevValue: T) => T)]
 	) => {
@@ -45,8 +35,6 @@ export function Signal<T>(
 
 	signal.value = initialValue;
 	signal.callbacks = new Set<() => void>();
-	signal.title = options?.name;
-
 	return signal;
 }
 
