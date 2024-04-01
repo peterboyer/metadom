@@ -81,9 +81,10 @@ function walk(
 			reaction(
 				() => value_unsafe(),
 				(value) => {
-					fragmentNodes.forEach((fragmentNode) =>
-						node.removeChild(fragmentNode),
-					);
+					fragmentNodes.forEach((fragmentNode) => {
+						unmount(fragmentNode);
+						node.removeChild(fragmentNode);
+					});
 					fragmentNodes.clear();
 					const fragment = new DocumentFragment();
 					walk(fragment, value, disposers);
