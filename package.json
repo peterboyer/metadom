@@ -19,8 +19,10 @@
 		"entry": [
 			"src/index.ts"
 		],
-		"sourcemap": true,
-		"clean": true
+		"dts": true,
+		"format": "esm",
+		"clean": true,
+		"sourcemap": true
 	},
 	"prettier": {
 		"useTabs": true

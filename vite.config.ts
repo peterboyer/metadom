@@ -13,5 +13,6 @@ export default defineConfig({
 		jsxImportSource: "@",
 		jsxInject: `import { jsx } from "@/jsx-runtime";`,
 		jsxFactory: "jsx",
+		jsxFragment: "jsx.Fragment",
 	},
 });

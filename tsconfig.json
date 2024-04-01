@@ -12,7 +12,6 @@
 
 		"jsx": "react-jsx",
 		"jsxImportSource": "@jsx",
-		"jsxFragmentFactory": "jsx.Fragment",
 
 		"baseUrl": ".",
 		"paths": {

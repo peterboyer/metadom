@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
 tsup
 cp package.json dist
 cd dist
