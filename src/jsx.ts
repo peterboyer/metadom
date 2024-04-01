@@ -177,7 +177,14 @@ function setElementAttribute(node: Node, key: string, value: unknown): void {
 	}
 }
 
-export function mount(element: Element, component: unknown): Node {
+export function mount(elementOrId: Element | string, component: unknown): Node {
+	const element =
+		typeof elementOrId === "string"
+			? document.getElementById(elementOrId)
+			: elementOrId;
+	if (!element) {
+		throw new Error(`getElementById("${elementOrId}") returned null.`);
+	}
 	walk(element, component);
 	document.body.append(element);
 	return element;
