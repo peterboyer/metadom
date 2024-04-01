@@ -10,6 +10,12 @@ declare global {
 			dt: Attributes;
 			dd: Attributes;
 			pre: Attributes;
+			h1: Attributes;
+			ul: Attributes;
+			li: Attributes;
+			a: AnchorAttributes;
+			p: Attributes;
+			nav: Attributes;
 			button: Attributes;
 			fieldset: Attributes;
 			legend: Attributes;
@@ -66,4 +72,8 @@ interface InputAttributes<TType extends string, TValue> extends Attributes {
 
 interface LabelAttributes extends Attributes {
 	for?: string;
+}
+
+interface AnchorAttributes extends Attributes {
+	href: string;
 }

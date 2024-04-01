@@ -1,5 +1,6 @@
 import { Signal, reaction } from "@";
 
+import { Nav } from "./shared/nav";
 import { Counter } from "./hash/counter";
 import { Weather } from "./hash/weather";
 
@@ -16,29 +17,33 @@ export function Hash(): JSX.Element {
 	);
 
 	return (
-		<main>
-			<fieldset>
-				<legend>Demo</legend>
-				{Array.from(
-					new Map<Mode, string>([
-						["counter", "Counter"],
-						["weather", "Weather"],
-					]),
-				).map(([name, title]) => (
-					<>
-						<input
-							type="radio"
-							name={name}
-							id={`radio-${name}`}
-							value={() => mode() === name}
-							onchangevalue={() => mode(name)}
-						/>
-						<label for={`radio-${name}`}>{title}</label>
-					</>
-				))}
-			</fieldset>
-			{() => mode() === "counter" && <Counter />}
-			{() => mode() === "weather" && <Weather />}
-		</main>
+		<>
+			<h1>Hash</h1>
+			<Nav />
+			<main>
+				<fieldset>
+					<legend>Demo</legend>
+					{Array.from(
+						new Map<Mode, string>([
+							["counter", "Counter"],
+							["weather", "Weather"],
+						]),
+					).map(([name, title]) => (
+						<>
+							<input
+								type="radio"
+								name={name}
+								id={`radio-${name}`}
+								value={() => mode() === name}
+								onchangevalue={() => mode(name)}
+							/>
+							<label for={`radio-${name}`}>{title}</label>
+						</>
+					))}
+				</fieldset>
+				{() => mode() === "counter" && <Counter />}
+				{() => mode() === "weather" && <Weather />}
+			</main>
+		</>
 	);
 }

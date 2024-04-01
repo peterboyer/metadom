@@ -1,6 +1,5 @@
-import { Signal } from "./signal";
-
-const pathname = Signal(location.pathname);
+import { location } from "./jsx";
+import { reaction } from "./signal";
 
 export type RouteProps = {
 	path: string;
@@ -8,5 +7,9 @@ export type RouteProps = {
 };
 
 export function Route({ path, element }: RouteProps): JSX.Element {
-	return <>{() => pathname() === path && element()}</>;
+	reaction(
+		() => location.pathname(),
+		(pathname) => console.log({ pathname }),
+	);
+	return <>{() => location.pathname() === path && element()}</>;
 }

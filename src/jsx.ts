@@ -1,4 +1,4 @@
-import { reaction } from "./signal";
+import { Signal, reaction } from "./signal";
 import type { Disposer } from "./disposer";
 
 type IntrinsicElementTag = string;
@@ -98,21 +98,54 @@ function walk(
 }
 
 type NodeData = {
-	change?: (...args: any[]) => void;
+	handlers: Partial<
+		Record<keyof HTMLElementEventMap, (...args: any[]) => void>
+	>;
 	disposers: Set<() => void>;
 };
 
 const Nodes = new Map<Node, NodeData>();
 function getNodeData(node: Node): NodeData {
 	let data = Nodes.get(node);
-	if (!data) Nodes.set(node, (data = { disposers: new Set() }));
+	if (!data) {
+		Nodes.set(
+			node,
+			(data = {
+				handlers: {},
+				disposers: new Set(),
+			}),
+		);
+	}
 	return data;
 }
+
+export const location = {
+	pathname: Signal(globalThis.location.pathname),
+};
 
 function setElementAttribute(node: Node, key: string, value: unknown): void {
 	if (key === "for") {
 		if (node instanceof HTMLLabelElement) {
 			node.htmlFor = `${value}`;
+		}
+	} else if (key === "href") {
+		if (node instanceof HTMLAnchorElement) {
+			const value_unsafe = value as string;
+			node.href = value_unsafe;
+
+			if (value_unsafe.startsWith("/")) {
+				const data = getNodeData(node);
+				if (data.handlers.click) {
+					node.removeEventListener("click", data.handlers.click);
+				}
+				const callback = (event: HTMLElementEventMap["click"]) => {
+					event.preventDefault();
+					history.pushState({}, "", node.href);
+					location.pathname(new URL(node.href).pathname);
+				};
+				node.addEventListener("click", callback);
+				data.handlers.change = callback;
+			}
 		}
 	} else if (key === "value") {
 		if (node instanceof HTMLInputElement) {
@@ -123,15 +156,15 @@ function setElementAttribute(node: Node, key: string, value: unknown): void {
 	} else if (key === "onchangevalue") {
 		if (node instanceof HTMLInputElement) {
 			const data = getNodeData(node);
-			if (data.change) {
-				node.removeEventListener("change", data.change);
+			if (data.handlers.change) {
+				node.removeEventListener("change", data.handlers.change);
 			}
 			const callback = (event: HTMLElementEventMap["change"]) => {
 				const value_unsafe = value as (value: unknown) => void;
 				value_unsafe((event.target! as typeof node).checked);
 			};
 			node.addEventListener("change", callback);
-			data.change = callback;
+			data.handlers.change = callback;
 		}
 	} else if (key.startsWith("on")) {
 		const type = key.substring(2);
