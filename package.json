@@ -1,6 +1,9 @@
 {
 	"type": "module",
 	"license": "MIT",
+	"main": "./index.js",
+	"module": "./index.js",
+	"types": "./index.d.ts",
 	"scripts": {
 		"dev": "vite --host",
 		"build": "./build.sh",
