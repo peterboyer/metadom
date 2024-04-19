@@ -122,7 +122,12 @@ function getNodeData(node: Node): NodeData {
 }
 
 function setElementAttribute(node: Node, key: string, value: unknown): void {
-	if (key === "for") {
+	if (key === "class") {
+		if (node instanceof HTMLElement) {
+			const value_unsafe = value as string;
+			node.className = value_unsafe;
+		}
+	} else if (key === "for") {
 		if (node instanceof HTMLLabelElement) {
 			node.htmlFor = `${value}`;
 		}
