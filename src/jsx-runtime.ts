@@ -12,6 +12,11 @@ export namespace JSX {
 		dd: Attributes;
 		pre: Attributes;
 		h1: Attributes;
+		h2: Attributes;
+		h3: Attributes;
+		h4: Attributes;
+		h5: Attributes;
+		h6: Attributes;
 		ul: Attributes;
 		li: Attributes;
 		a: AnchorAttributes;
@@ -53,7 +58,8 @@ export namespace JSX {
 export type Component = () => JSX.Element;
 
 export interface Attributes extends EventListenerAttributes {
-	id?: ReactiveAttribute<string>;
+	id?: string;
+	role?: string;
 	class?: ReactiveAttribute<string>;
 }
 
