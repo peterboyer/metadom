@@ -6,7 +6,7 @@ export function Weather(): JSX.Element {
 		| { _type: "Loading" }
 		| { _type: "Error"; message: string }
 		| { _type: "Ok"; data: unknown }
-	>({ _type: "Ready" }, { name: "state" });
+	>({ _type: "Ready" });
 
 	const onFetch = async () => {
 		state({ _type: "Loading" });

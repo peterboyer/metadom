@@ -1,7 +1,7 @@
 import { Signal } from "metadom";
 
 export function Counter(): JSX.Element {
-	const count = Signal(0, { name: "count" });
+	const count = Signal(0);
 
 	return (
 		<div>
