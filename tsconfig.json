@@ -2,7 +2,7 @@
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"extends": ["./tsconfig.base.json", "./src/config/tsconfig.json"],
 	"include": ["src", "demo"],
-	"exclude": ["src/jsx-global.ts"],
+	"exclude": ["src/jsx-global.ts", "demo/dist"],
 	"compilerOptions": {
 		"noEmit": true,
 		"baseUrl": ".",
