@@ -95,6 +95,20 @@ function walk(
 				},
 			),
 		);
+	} else if (value instanceof Promise) {
+		const target = document.createElement("div");
+		node.appendChild(target);
+		value.then((result: unknown) => {
+			walk(target, result, disposers);
+		});
+	} else if (
+		value &&
+		typeof value === "object" &&
+		"default" in value &&
+		typeof value.default === "function"
+	) {
+		const result = value.default();
+		walk(node, result, disposers);
 	}
 	return disposers;
 }

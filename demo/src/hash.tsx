@@ -6,6 +6,7 @@ import { Weather } from "./hash/weather.js";
 
 type Mode = "counter" | "weather";
 
+export default Hash;
 export function Hash(): JSX.Element {
 	title("Hash");
 
