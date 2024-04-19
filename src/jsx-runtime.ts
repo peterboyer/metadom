@@ -24,6 +24,7 @@ export namespace JSX {
 		fieldset: Attributes;
 		legend: Attributes;
 		label: LabelAttributes;
+		section: LabelAttributes;
 		input:
 			| InputAttributes<"button", never>
 			| InputAttributes<"checkbox", boolean>
