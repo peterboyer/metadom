@@ -77,10 +77,10 @@ export interface LabelAttributes extends Attributes {
 }
 
 export interface AnchorAttributes extends Attributes {
-	href: string;
+	href: ReactiveAttribute<string>;
 }
 
 export interface ImageAttributes extends Attributes {
-	src: string;
-	alt: string;
+	src: ReactiveAttribute<string>;
+	alt: ReactiveAttribute<string>;
 }
