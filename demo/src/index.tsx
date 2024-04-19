@@ -7,8 +7,15 @@ function App(): JSX.Element {
 	return (
 		<>
 			<Nav />
-			{() => routing.url().pathname === "/" && import("./home.js")}
-			{() => routing.url().pathname === "/hash" && import("./hash.js")}
+			{() => {
+				if (routing.url().pathname === "/") {
+					return import("./home.js");
+				} else if (routing.url().pathname === "/hash") {
+					return import("./hash.js");
+				} else {
+					return;
+				}
+			}}
 			<footer>Footer</footer>
 		</>
 	);
