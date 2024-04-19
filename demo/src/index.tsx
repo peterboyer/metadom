@@ -9,6 +9,7 @@ function App(): JSX.Element {
 			<Nav />
 			{() => routing.url().pathname === "/" && import("./home.js")}
 			{() => routing.url().pathname === "/hash" && import("./hash.js")}
+			<footer>Footer</footer>
 		</>
 	);
 }

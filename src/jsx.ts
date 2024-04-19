@@ -75,39 +75,27 @@ function walk(
 	} else if (value instanceof Node) {
 		node.appendChild(value);
 	} else if (typeof value === "function") {
-		const fragmentNodes = new Set<Node>();
+		const slot = document.createElement("slot");
 		const value_unsafe = value as () => unknown;
 		disposers.push(
 			reaction(
 				() => value_unsafe(),
 				(value) => {
-					fragmentNodes.forEach((fragmentNode) => {
-						unmount(fragmentNode);
-						node.removeChild(fragmentNode);
+					slot.childNodes.forEach((childNode) => {
+						unmount(childNode);
+						slot.removeChild(childNode);
 					});
-					fragmentNodes.clear();
-					const fragment = new DocumentFragment();
-					walk(fragment, value, disposers);
-					const dump = () => {
-						fragment.childNodes.forEach((childNode) =>
-							fragmentNodes.add(childNode),
-						);
-						node.appendChild(fragment);
-					};
-					const fragment_unsafe = fragment as any;
-					fragment_unsafe.dump = dump;
-					dump();
+					walk(slot, value, disposers);
 				},
 			),
 		);
+		node.appendChild(slot);
 	} else if (value instanceof Promise) {
+		const slot = document.createElement("slot");
 		value.then((result: unknown) => {
-			walk(node, result, disposers);
-			if ("dump" in node) {
-				const node_unsafe = node as any;
-				node_unsafe.dump();
-			}
+			walk(slot, result, disposers);
 		});
+		node.appendChild(slot);
 	} else if (isModule(value)) {
 		walk(node, value.default(), disposers);
 	}
