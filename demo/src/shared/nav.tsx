@@ -1,4 +1,4 @@
-import { Signal } from "@";
+import { Signal } from "metadom";
 
 export const title = Signal("Demo");
 

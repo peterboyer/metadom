@@ -1,20 +1,14 @@
 import { defineConfig } from "vite";
+import Metadom from "./src/config/vite";
 
 export default defineConfig({
+	plugins: [Metadom()],
 	root: "demo",
 	server: { port: 3000 },
 	preview: { port: 3000 },
 	resolve: {
 		alias: {
-			"@": new URL("./src", import.meta.url).pathname,
+			metadom: new URL("./src", import.meta.url).pathname,
 		},
-	},
-	esbuild: {
-		jsx: "transform",
-		jsxDev: false,
-		jsxImportSource: "@",
-		jsxInject: `import { jsx } from "@/jsx-runtime";`,
-		jsxFactory: "jsx",
-		jsxFragment: "jsx.Fragment",
 	},
 });

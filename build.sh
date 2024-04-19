@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-tsup
+[[ -d dist ]] && rm -r dist
+tsc --project tsconfig.build.json
+cp src/config/tsconfig.json dist/config
 cp package.json dist
 cd dist
 	npm pkg delete scripts

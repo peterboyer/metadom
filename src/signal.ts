@@ -1,4 +1,4 @@
-import type { Disposer } from "./disposer";
+import type { Disposer } from "./disposer.js";
 
 export interface Signal<T = unknown> {
 	/* get */ (): T;

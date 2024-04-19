@@ -1,4 +1,4 @@
-import { title } from "./shared/nav";
+import { title } from "./shared/nav.js";
 
 export function Home(): JSX.Element {
 	title("Home");

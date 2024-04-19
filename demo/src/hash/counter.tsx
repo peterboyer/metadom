@@ -1,4 +1,4 @@
-import { Signal } from "@";
+import { Signal } from "metadom";
 
 export function Counter(): JSX.Element {
 	const count = Signal(0, { name: "count" });

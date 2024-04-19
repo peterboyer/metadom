@@ -1,8 +1,9 @@
-import { mount, routing } from "@";
+import "metadom/jsx-global";
+import { mount, routing } from "metadom";
 
-import { Nav } from "./shared/nav";
-import { Home } from "./home";
-import { Hash } from "./hash";
+import { Nav } from "./shared/nav.js";
+import { Home } from "./home.js";
+import { Hash } from "./hash.js";
 
 function App(): JSX.Element {
 	return (

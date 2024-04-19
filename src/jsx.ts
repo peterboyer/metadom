@@ -1,6 +1,6 @@
-import { reaction } from "./signal";
-import * as routing from "./routing";
-import type { Disposer } from "./disposer";
+import { reaction } from "./signal.js";
+import * as routing from "./routing.js";
+import type { Disposer } from "./disposer.js";
 
 type IntrinsicElementTag = string;
 type ValueElementTag = (

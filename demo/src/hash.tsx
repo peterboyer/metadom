@@ -1,8 +1,8 @@
-import { Signal, reaction } from "@";
+import { Signal, reaction } from "metadom";
 
-import { title } from "./shared/nav";
-import { Counter } from "./hash/counter";
-import { Weather } from "./hash/weather";
+import { title } from "./shared/nav.js";
+import { Counter } from "./hash/counter.js";
+import { Weather } from "./hash/weather.js";
 
 type Mode = "counter" | "weather";
 

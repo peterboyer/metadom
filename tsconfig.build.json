@@ -1,0 +1,14 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"extends": ["./tsconfig.base.json"],
+	"include": [
+		"src/index.ts",
+		"src/jsx-runtime.ts",
+		"src/jsx-global.ts",
+		"src/config/vite.ts"
+	],
+	"compilerOptions": {
+		"outDir": "dist",
+		"declaration": true
+	}
+}

@@ -1,4 +1,4 @@
-import { Signal } from "@";
+import { Signal } from "metadom";
 
 export function Weather(): JSX.Element {
 	const state = Signal<
