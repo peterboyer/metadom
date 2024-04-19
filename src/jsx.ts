@@ -97,13 +97,10 @@ function walk(
 		);
 	} else if (value instanceof Promise) {
 		const target = document.createElement("div");
+		value.then((result: unknown) => walk(target, result, disposers));
 		node.appendChild(target);
-		value.then((result: unknown) => {
-			walk(target, result, disposers);
-		});
 	} else if (isModule(value)) {
-		const result = value.default();
-		walk(node, result, disposers);
+		walk(node, value.default(), disposers);
 	}
 	return disposers;
 }
