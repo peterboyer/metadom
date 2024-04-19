@@ -101,16 +101,21 @@ function walk(
 		value.then((result: unknown) => {
 			walk(target, result, disposers);
 		});
-	} else if (
-		value &&
-		typeof value === "object" &&
-		"default" in value &&
-		typeof value.default === "function"
-	) {
+	} else if (isModule(value)) {
 		const result = value.default();
 		walk(node, result, disposers);
 	}
 	return disposers;
+}
+
+type Module = { default: () => unknown };
+function isModule(value: unknown): value is Module {
+	return !!(
+		value &&
+		typeof value === "object" &&
+		"default" in value &&
+		typeof value.default === "function"
+	);
 }
 
 type NodeData = {
