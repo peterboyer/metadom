@@ -88,17 +88,26 @@ function walk(
 					fragmentNodes.clear();
 					const fragment = new DocumentFragment();
 					walk(fragment, value, disposers);
-					fragment.childNodes.forEach((childNode) =>
-						fragmentNodes.add(childNode),
-					);
-					node.appendChild(fragment);
+					const dump = () => {
+						fragment.childNodes.forEach((childNode) =>
+							fragmentNodes.add(childNode),
+						);
+						node.appendChild(fragment);
+					};
+					const fragment_unsafe = fragment as any;
+					fragment_unsafe.dump = dump;
+					dump();
 				},
 			),
 		);
 	} else if (value instanceof Promise) {
-		const target = document.createElement("div");
-		value.then((result: unknown) => walk(target, result, disposers));
-		node.appendChild(target);
+		value.then((result: unknown) => {
+			walk(node, result, disposers);
+			if ("dump" in node) {
+				const node_unsafe = node as any;
+				node_unsafe.dump();
+			}
+		});
 	} else if (isModule(value)) {
 		walk(node, value.default(), disposers);
 	}
