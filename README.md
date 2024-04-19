@@ -39,15 +39,15 @@ Add to your project's `tsconfig.json`:
 
 ### Global JSX Namespace
 
-Instead of having to `import type { JSX } from "metadom";` you can make it
-globally available.
+Instead of having to import the `JSX` namespace for typing your project's
+components' return types, you may make it globally available.
 
 #### via `tsconfig.json`:
 
 ```diff
 {
 	"compilerOptions": {
-+		"types": ["metadom/jsx-global"]
++		"types": ["metadom/globals"]
 	}
 }
 ```
@@ -55,5 +55,5 @@ globally available.
 #### via entry-point:
 
 ```diff
-+ import "metadom/jsx-global";
++ import "metadom/globals";
 ```

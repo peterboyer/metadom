@@ -2,14 +2,14 @@
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"extends": ["./tsconfig.base.json", "./src/config/tsconfig.json"],
 	"include": ["src", "demo"],
-	"exclude": ["src/jsx-global.ts", "demo/dist"],
+	"exclude": ["src/globals.ts", "demo/dist"],
 	"compilerOptions": {
 		"noEmit": true,
 		"baseUrl": ".",
 		"paths": {
 			"metadom": ["src/index.ts"],
 			"metadom/jsx-runtime": ["src/jsx-runtime.ts"],
-			"metadom/jsx-global": ["src/jsx-global.ts"]
+			"metadom/globals": ["src/globals.ts"]
 		},
 		"plugins": [{ "name": "typescript-plugin-css-modules" }]
 	}

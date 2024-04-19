@@ -1,4 +1,4 @@
-import "metadom/jsx-global";
+import "metadom/globals";
 import { mount, routing } from "metadom";
 
 import { Nav } from "./shared/nav.js";

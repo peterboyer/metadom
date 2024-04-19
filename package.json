@@ -1,6 +1,11 @@
 {
-	"type": "module",
+	"name": "metadom",
+	"version": "0.0.0",
+	"description": "Metadom.",
+	"repository": "github:peterboyer/metadom",
+	"author": "Peter Boyer <https://github.com/peterboyer>",
 	"license": "MIT",
+	"type": "module",
 	"main": "./index.js",
 	"module": "./index.js",
 	"types": "./index.d.ts",
@@ -10,24 +15,14 @@
 		"typecheck": "tsc"
 	},
 	"devDependencies": {
-		"@tsconfig/node21": "^21.0.3",
 		"@tsconfig/strictest": "^2.0.5",
 		"prettier": "^3.2.5",
-		"tsup": "^8.0.2",
 		"typescript": "^5.4.3",
 		"typescript-plugin-css-modules": "^5.1.0",
 		"vite": "^5.2.7"
 	},
-	"tsup": {
-		"entry": [
-			"src/index.ts"
-		],
-		"dts": true,
-		"format": "esm",
-		"clean": true,
-		"sourcemap": true
-	},
 	"prettier": {
-		"useTabs": true
+		"useTabs": true,
+		"quoteProps": "consistent"
 	}
 }
