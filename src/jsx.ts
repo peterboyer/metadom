@@ -76,6 +76,7 @@ function walk(
 		node.appendChild(value);
 	} else if (typeof value === "function") {
 		const slot = document.createElement("slot");
+		slot.setAttribute(":type", "function");
 		const value_unsafe = value as () => unknown;
 		disposers.push(
 			reaction(
@@ -92,6 +93,7 @@ function walk(
 		node.appendChild(slot);
 	} else if (value instanceof Promise) {
 		const slot = document.createElement("slot");
+		slot.setAttribute(":type", "promise");
 		value.then((result: unknown) => {
 			walk(slot, result, disposers);
 		});
