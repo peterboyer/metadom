@@ -1,3 +1,36 @@
+<div align="center">
+
+# metadom
+
+**Metadom.**
+
+[Example](#example) • [Installation](#installation) • [Philosophy](#philosophy)
+
+</div>
+
+```tsx
+import { Signal } from "metadom";
+
+export function Counter(): JSX.Element {
+  const count = Signal(0);
+
+  return (
+    <div>
+      <dl>
+        <dt>Count</dt>
+        <dd>{count}</dd>
+        <dt>Count * 10</dt>
+        <dd>{() => count() * 10}</dd>
+      </dl>
+      <div>
+        <button onclick={() => count((a) => a + 1)}>increment</button>
+        <button onclick={() => count((a) => a - 1)}>decrement</button>
+      </div>
+    </div>
+  );
+}
+```
+
 # Philosophy
 
 - No compilation.
@@ -21,7 +54,7 @@ Add to your project's `vite.config.ts`:
 + import Metadom from "metadom/config/vite";
 
 export default defineConfig({
-+	plugins: [Metadom()],
++ plugins: [Metadom()],
 })
 ```
 
@@ -33,7 +66,7 @@ Add to your project's `tsconfig.json`:
 
 ```diff
 {
-+	"extends": ["metadom/config/tsconfig.json"],
++ "extends": ["metadom/config/tsconfig.json"],
 }
 ```
 
@@ -46,9 +79,9 @@ components' return types, you may make it globally available.
 
 ```diff
 {
-	"compilerOptions": {
-+		"types": ["metadom/globals"]
-	}
+  "compilerOptions": {
++   "types": ["metadom/globals"]
+  }
 }
 ```
 
