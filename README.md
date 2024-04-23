@@ -2,14 +2,18 @@
 
 # metadom
 
-**Metadom.**
+**Meta-DOM. A signal-driven, declarative UI library.**
 
 [Example](#example) • [Installation](#installation) • [Philosophy](#philosophy)
 
 </div>
 
+# Example
+
 ```tsx
-import { Signal } from "metadom";
+import { mount, Signal } from "metadom";
+
+mount(<Counter />);
 
 export function Counter(): JSX.Element {
   const count = Signal(0);
@@ -55,7 +59,7 @@ Add to your project's `vite.config.ts`:
 
 export default defineConfig({
 + plugins: [Metadom()],
-})
+});
 ```
 
 ## TypeScript
@@ -80,7 +84,7 @@ components' return types, you may make it globally available.
 ```diff
 {
   "compilerOptions": {
-+   "types": ["metadom/globals"]
++   "types": ["metadom/globals"],
   }
 }
 ```
