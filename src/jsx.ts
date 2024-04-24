@@ -2,30 +2,37 @@ import { reaction } from "./signal.js";
 import * as routing from "./routing.js";
 import type { Disposer } from "./disposer.js";
 
-type IntrinsicElementTag = string;
-type ValueElementTag = (
-	attributes?: Record<string, unknown>,
-) => Element | unknown[] | undefined;
-
-export function jsx(
-	tag: IntrinsicElementTag | ValueElementTag,
-	attributes: Record<string, unknown>,
+export function jsx<
+	TTag extends keyof JSX.IntrinsicElements | ((...args: any[]) => any),
+>(
+	tag: TTag,
+	attributes: TTag extends keyof JSX.IntrinsicElements
+		? JSX.IntrinsicElements[TTag]
+		: TTag extends (...args: any[]) => any
+			? Parameters<TTag>[0] extends undefined
+				? Record<string, never>
+				: Parameters<TTag>[0]
+			: Record<string, never>,
 	...children: unknown[]
-): Element | unknown[] | undefined {
+): TTag extends keyof JSX.IntrinsicElements
+	? Element
+	: TTag extends (...args: any[]) => any
+		? ReturnType<TTag>
+		: unknown {
 	if (typeof tag === "string") {
 		const { element, disposers } = createElement(tag, attributes, children);
 		const data = getNodeData(element);
 		disposers.forEach((disposer) => data.disposers.add(disposer));
-		return element;
+		return element as ReturnType<typeof jsx>;
 	}
 	if (tag === jsx.Fragment) {
-		return children;
+		return children as ReturnType<typeof jsx>;
 	}
 	if (typeof tag === "function") {
 		return tag({ ...attributes, children });
 	}
 
-	return undefined;
+	return undefined as ReturnType<typeof jsx>;
 }
 
 jsx.Fragment = function Fragment() {};

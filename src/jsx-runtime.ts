@@ -3,91 +3,68 @@ export type { jsx } from "./jsx.js";
 export namespace JSX {
 	export type Element = globalThis.Element;
 	export type ElementClass = never;
-	export type IntrinsicElements = {
-		div: Attributes;
-		span: Attributes;
-		main: Attributes;
-		dl: Attributes;
-		dt: Attributes;
-		dd: Attributes;
-		pre: Attributes;
-		h1: Attributes;
-		h2: Attributes;
-		h3: Attributes;
-		h4: Attributes;
-		h5: Attributes;
-		h6: Attributes;
-		ul: Attributes;
-		li: Attributes;
-		a: AnchorAttributes;
-		p: Attributes;
-		nav: Attributes;
-		img: ImageAttributes;
-		footer: Attributes;
-		sup: Attributes;
-		button: Attributes;
-		fieldset: Attributes;
-		legend: Attributes;
-		label: LabelAttributes;
-		section: LabelAttributes;
-		input:
-			| InputAttributes<"button", never>
-			| InputAttributes<"checkbox", boolean>
-			| InputAttributes<"color", string>
-			| InputAttributes<"date", string>
-			| InputAttributes<"datetime-local", string>
-			| InputAttributes<"email", string>
-			| InputAttributes<"file", globalThis.File>
-			| InputAttributes<"hidden", unknown>
-			| InputAttributes<"image", string>
-			| InputAttributes<"month", number>
-			| InputAttributes<"number", number>
-			| InputAttributes<"password", string>
-			| InputAttributes<"radio", boolean>
-			| InputAttributes<"range", number>
-			| InputAttributes<"reset", never>
-			| InputAttributes<"search", string>
-			| InputAttributes<"submit", never>
-			| InputAttributes<"tel", string>
-			| InputAttributes<"time", string>
-			| InputAttributes<"url", string>
-			| InputAttributes<"week", number>;
+	export type IntrinsicElements = Record<
+		keyof HTMLElementTagNameMap,
+		{
+			id?: string;
+			role?: string;
+			class?: Reactive<string>;
+		} & {
+			[EventType in keyof HTMLElementEventMap as `on${EventType}`]?: (
+				event: HTMLElementEventMap[EventType],
+			) => void;
+		}
+	> & {
+		a: {
+			href: Recommended<Reactive<string>>;
+		};
+		img: {
+			src: Recommended<Reactive<string>>;
+			alt: Recommended<Reactive<string>>;
+		};
+		label: {
+			for: Recommended<string>;
+		};
+		input: {
+			name: Recommended<string>;
+		} & (
+			| InputVariant<"button", never>
+			| InputVariant<"checkbox", boolean>
+			| InputVariant<"color", string>
+			| InputVariant<"date", string>
+			| InputVariant<"datetime-local", string>
+			| InputVariant<"email", string>
+			| InputVariant<"file", globalThis.File>
+			| InputVariant<"hidden", unknown>
+			| InputVariant<"image", string>
+			| InputVariant<"month", number>
+			| InputVariant<"number", number>
+			| InputVariant<"password", string>
+			| InputVariant<"radio", boolean>
+			| InputVariant<"range", number>
+			| InputVariant<"reset", never>
+			| InputVariant<"search", string>
+			| InputVariant<"submit", never>
+			| InputVariant<"tel", string>
+			| InputVariant<"time", string>
+			| InputVariant<"url", string>
+			| InputVariant<"week", number>
+		);
 	};
 }
 
-export type Component = () => JSX.Element;
-
-export interface Attributes extends EventListenerAttributes {
-	id?: string;
-	role?: string;
-	class?: ReactiveAttribute<string>;
-}
-
-export type ReactiveAttribute<T> = T | (() => T);
-
-export type EventListenerAttributes = {
-	[EventType in keyof HTMLElementEventMap as `on${EventType}`]?: (
-		event: HTMLElementEventMap[EventType],
-	) => void;
+type InputVariant<TType extends string, TValue> = {
+	type: TType;
+	value: Recommended<Reactive<TValue>>;
+	onchangevalue: Recommended<(value: TValue) => void>;
 };
 
-export interface InputAttributes<TType extends string, TValue>
-	extends Attributes {
-	type: TType;
-	name: string;
-	value?: ReactiveAttribute<TValue>;
-	onchangevalue?: (value: TValue) => void;
-}
+/**
+ * Allow a property to be passed a function for a signal-driven value.
+ */
+export type Reactive<T> = T | (() => T);
 
-export interface LabelAttributes extends Attributes {
-	for?: string;
-}
-
-export interface AnchorAttributes extends Attributes {
-	href: ReactiveAttribute<string>;
-}
-
-export interface ImageAttributes extends Attributes {
-	src: ReactiveAttribute<string>;
-	alt: ReactiveAttribute<string>;
-}
+/**
+ * Require an explicit `undefined` value to opt-out of an optional property.
+ */
+export type Recommended<T> = undefined | T;
