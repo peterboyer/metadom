@@ -1,5 +1,6 @@
-import { reaction } from "./signal.js";
 import type { Disposer } from "./disposer.js";
+import type { NodeExtended } from "./node.js";
+import { reaction } from "./signal.js";
 import { setElementAttribute } from "./set-element-attribute.js";
 
 export function h<

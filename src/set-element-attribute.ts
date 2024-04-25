@@ -46,7 +46,8 @@ export function setElementAttribute(
 		const value_unsafe = value as () => unknown;
 		setEventListener(element, type_unsafe, value_unsafe);
 	} else {
-		(element as any)[key] = value;
+		const element_unsafe = element as any;
+		element_unsafe[key] = value;
 	}
 }
 

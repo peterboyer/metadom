@@ -1,4 +1,4 @@
-export type { jsx } from "./jsx.js";
+export type { h } from "./jsx.js";
 
 export namespace JSX {
 	export type Element = globalThis.Element;
