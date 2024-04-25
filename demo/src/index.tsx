@@ -21,4 +21,4 @@ function App(): JSX.Element {
 	);
 }
 
-mount(<App />);
+(window as any).unmount = mount(<App />);

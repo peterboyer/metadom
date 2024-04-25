@@ -7,9 +7,9 @@ export default function () {
 					jsx: "transform",
 					jsxDev: false,
 					jsxImportSource: "metadom",
-					jsxInject: `import { jsx } from "metadom";`,
-					jsxFactory: "jsx",
-					jsxFragment: "jsx.Fragment",
+					jsxInject: `import { h } from "metadom";`,
+					jsxFactory: "h",
+					jsxFragment: "h.Fragment",
 				},
 			} as const;
 		},
