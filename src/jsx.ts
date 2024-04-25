@@ -20,15 +20,15 @@ export function h<
 		? ReturnType<TTag>
 		: unknown {
 	if (typeof tag === "string") {
-		const node = document.createElement(tag);
-		const nodeData = Object.assign(node, { _disposers: [] as Disposer[] });
+		const _disposers: Disposer[] = [];
+		const node = Object.assign(document.createElement(tag), { _disposers });
 		if (attributes) {
 			for (const key in attributes) {
 				const props_unsafe = attributes as Record<string, unknown>;
 				const value = props_unsafe[key];
 				if (typeof value === "function" && !key.startsWith("on")) {
 					const value_unsafe = value as () => unknown;
-					nodeData._disposers.push(
+					node._disposers.push(
 						reaction(
 							() => value_unsafe(),
 							(value) => setElementAttribute(node, key, value),
@@ -39,7 +39,7 @@ export function h<
 				}
 			}
 		}
-		walk(node, children, nodeData._disposers);
+		walk(node, children);
 		return node as ReturnType<typeof h>;
 	}
 	if (tag === h.Fragment) {
@@ -54,43 +54,43 @@ export function h<
 
 h.Fragment = function Fragment() {};
 
-function walk(node: Node, value: unknown, disposers: Disposer[]): void {
+function walk(node: Node, value: unknown): void {
 	if (typeof value === "number") {
 		node.appendChild(document.createTextNode(value.toString()));
 	} else if (typeof value === "string") {
 		node.appendChild(document.createTextNode(value));
 	} else if (Array.isArray(value)) {
-		value.forEach((value) => walk(node, value, disposers));
+		value.forEach((value) => walk(node, value));
 	} else if (value instanceof Node) {
 		node.appendChild(value);
 	} else if (typeof value === "function") {
-		const slot = document.createElement("slot");
+		const _disposers: Disposer[] = [];
+		const slot = Object.assign(document.createElement("slot"), { _disposers });
 		slot.setAttribute(":type", "function");
+		node.appendChild(slot);
 		const value_unsafe = value as () => unknown;
-		disposers.push(
+		slot._disposers.push(
 			reaction(
 				() => value_unsafe(),
 				(value) => {
 					Array.from(slot.childNodes).forEach(unmount);
-					walk(slot, value, disposers);
+					walk(slot, value);
 				},
 			),
 		);
-		node.appendChild(slot);
 	} else if (value instanceof Promise) {
+		const value_unsafe = value as Promise<unknown>;
 		const slot = document.createElement("slot");
 		slot.setAttribute(":type", "promise");
-		value.then((result: unknown) => {
-			walk(slot, result, disposers);
-		});
 		node.appendChild(slot);
+		value_unsafe.then((result) => walk(slot, result));
 	} else if (
 		value &&
 		typeof value === "object" &&
 		"default" in value &&
 		typeof value.default === "function"
 	) {
-		walk(node, value.default(), disposers);
+		walk(node, value.default());
 	}
 }
 
@@ -110,21 +110,20 @@ export function mount(
 	} else {
 		node = nodeOrId;
 	}
-	const disposers: Disposer[] = [];
-	const slot = document.createElement("slot");
+	const _disposers: Disposer[] = [];
+	const slot = Object.assign(document.createElement("slot"), { _disposers });
 	slot.setAttribute(":type", "root");
-	walk(slot, h(h.Fragment, {}, component), disposers);
+	walk(slot, h(h.Fragment, {}, component));
 	node.appendChild(slot);
 	return () => {
 		Array.from(slot.childNodes).forEach(unmount);
-		disposers.forEach((disposer) => disposer());
+		slot._disposers.forEach((disposer) => disposer());
 		node.removeChild(slot);
 	};
 }
 
-function unmount(node: Node) {
+function unmount(node: Node & { _disposers?: Disposer[] }) {
 	Array.from(node.childNodes).forEach(unmount);
-	const nodeData = node as unknown as ElementData;
-	nodeData._disposers?.forEach((disposer) => disposer());
+	node._disposers?.forEach((disposer) => disposer());
 	node.parentNode?.removeChild(node);
 }
