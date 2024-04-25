@@ -36,7 +36,7 @@ export function h<TTag extends Tag>(
 		return children as ReturnType<typeof h>;
 	}
 	if (typeof tag === "function") {
-		return tag({ ...attributes, children });
+		return tag({ ...attributes, children }) as ReturnType<typeof h>;
 	}
 
 	return undefined as ReturnType<typeof h>;
