@@ -114,7 +114,7 @@ export function mount(
 	const _disposers: Disposer[] = [];
 	const slot = Object.assign(document.createElement("slot"), { _disposers });
 	slot.setAttribute(":type", "root");
-	walk(slot, h(h.Fragment, {}, component));
+	walk(slot, component);
 	node.appendChild(slot);
 	return () => {
 		Array.from(slot.childNodes).forEach(unmount);
