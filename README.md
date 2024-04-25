@@ -2,7 +2,7 @@
 
 # metadom
 
-**Meta-DOM. A signal-driven, declarative UI library.**
+**Meta-DOM. Signal-driven, declarative UI.**
 
 [Example](#example) • [Installation](#installation) • [Philosophy](#philosophy)
 
