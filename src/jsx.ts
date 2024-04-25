@@ -1,28 +1,17 @@
 import type { Disposer } from "./disposer.js";
-import type { NodeExtended } from "./node.js";
+import type { NodeExtended, ElementExtended } from "./node.js";
 import { reaction } from "./signal.js";
 import { setElementAttribute } from "./set-element-attribute.js";
 
-export function h<
-	TTag extends keyof JSX.IntrinsicElements | ((...args: any[]) => any),
->(
+export function h<TTag extends Tag>(
 	tag: TTag,
-	attributes: TTag extends keyof JSX.IntrinsicElements
-		? JSX.IntrinsicElements[TTag]
-		: TTag extends (...args: any[]) => any
-			? Parameters<TTag>[0] extends undefined
-				? Record<string, never>
-				: Parameters<TTag>[0]
-			: Record<string, never>,
-	...children: unknown[]
-): TTag extends keyof JSX.IntrinsicElements
-	? Element
-	: TTag extends (...args: any[]) => any
-		? ReturnType<TTag>
-		: unknown {
+	attributes: TagAttributes<TTag>,
+	...children: TagChildren
+): TagReturn<TTag> {
 	if (typeof tag === "string") {
-		const _disposers = new Set<Disposer>();
-		const node = Object.assign(document.createElement(tag), { _disposers });
+		const node = Object.assign(document.createElement(tag), {
+			_disposers: new Set<Disposer>(),
+		}) satisfies ElementExtended;
 		if (attributes) {
 			for (const key in attributes) {
 				const props_unsafe = attributes as Record<string, unknown>;
@@ -65,8 +54,9 @@ function walk(node: Node, value: unknown): void {
 	} else if (value instanceof Node) {
 		node.appendChild(value);
 	} else if (typeof value === "function") {
-		const _disposers = new Set<Disposer>();
-		const slot = Object.assign(document.createElement("slot"), { _disposers });
+		const slot = Object.assign(document.createElement("slot"), {
+			_disposers: new Set<Disposer>(),
+		}) satisfies ElementExtended;
 		slot.setAttribute(":type", "function");
 		node.appendChild(slot);
 		const value_unsafe = value as () => unknown;
@@ -111,8 +101,9 @@ export function mount(
 	} else {
 		node = nodeOrId;
 	}
-	const _disposers: Disposer[] = [];
-	const slot = Object.assign(document.createElement("slot"), { _disposers });
+	const slot = Object.assign(document.createElement("slot"), {
+		_disposers: new Set<Disposer>(),
+	}) satisfies ElementExtended;
 	slot.setAttribute(":type", "root");
 	walk(slot, component);
 	node.appendChild(slot);
@@ -129,3 +120,21 @@ function unmount(node: NodeExtended) {
 	node._disposersKeyed?.forEach((disposer) => disposer());
 	node.parentNode?.removeChild(node);
 }
+
+type Tag = keyof JSX.IntrinsicElements | ((...args: any[]) => any);
+
+type TagAttributes<TTag> = TTag extends keyof JSX.IntrinsicElements
+	? JSX.IntrinsicElements[TTag]
+	: TTag extends (...args: any[]) => any
+		? Parameters<TTag>[0] extends undefined
+			? Record<string, never>
+			: Parameters<TTag>[0]
+		: Record<string, never>;
+
+type TagChildren = unknown[];
+
+type TagReturn<TTag> = TTag extends keyof JSX.IntrinsicElements
+	? Element
+	: TTag extends (...args: any[]) => any
+		? ReturnType<TTag>
+		: unknown;
