@@ -48,6 +48,12 @@ export function Counter(): JSX.Element {
 
 # Installation
 
+Available on `npm` ([link](https://www.npmjs.com/package/metadom)):
+
+```
+metadom
+```
+
 ## Vite
 
 ### Config
