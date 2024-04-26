@@ -1,7 +1,7 @@
 export type { h } from "./jsx.js";
 
 export namespace JSX {
-	export type Element = globalThis.Element;
+	export type Element = globalThis.Element | Promise<unknown>;
 	export type ElementClass = never;
 	export type IntrinsicElements = Record<
 		keyof HTMLElementTagNameMap,

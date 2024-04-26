@@ -3,8 +3,14 @@ import { Signal, reaction } from "metadom";
 import { title } from "./shared/nav.js";
 import { Counter } from "./hash/counter.js";
 import { Weather } from "./hash/weather.js";
+import { Async, AsyncWithLoader } from "./hash/async.js";
 
-type Mode = "counter" | "weather";
+type Mode =
+	| "counter"
+	| "weather"
+	| "async"
+	| "async-loader-resolve"
+	| "async-loader-reject";
 
 export default Hash;
 export function Hash(): JSX.Element {
@@ -27,6 +33,9 @@ export function Hash(): JSX.Element {
 					new Map<Mode, string>([
 						["counter", "Counter"],
 						["weather", "Weather"],
+						["async", "Async"],
+						["async-loader-resolve", "Async (w/ Loader) Resolve"],
+						["async-loader-reject", "Async (w/ Loader) Reject"],
 					]),
 				).map(([name, title]) => (
 					<>
@@ -41,8 +50,24 @@ export function Hash(): JSX.Element {
 					</>
 				))}
 			</fieldset>
-			{() => mode() === "counter" && <Counter />}
-			{() => mode() === "weather" && <Weather />}
+			{() => {
+				if (mode() === "counter") {
+					return <Counter />;
+				}
+				if (mode() === "weather") {
+					return <Weather />;
+				}
+				if (mode() === "async") {
+					return <Async />;
+				}
+				if (mode() === "async-loader-resolve") {
+					return <AsyncWithLoader mode="resolve" />;
+				}
+				if (mode() === "async-loader-reject") {
+					return <AsyncWithLoader mode="reject" />;
+				}
+				return null;
+			}}
 		</main>
 	);
 }

@@ -2,6 +2,7 @@ import type { Disposer } from "./disposer.js";
 import type { NodeExtended, ElementExtended } from "./node.js";
 import { reaction } from "./signal.js";
 import { setElementAttribute } from "./set-element-attribute.js";
+import { Signal_fromPromise } from "./signal-from-promise.js";
 
 export function h<TTag extends Tag>(
 	tag: TTag,
@@ -30,16 +31,39 @@ export function h<TTag extends Tag>(
 			}
 		}
 		walk(node, children);
-		return node as ReturnType<typeof h>;
+		return node as TagReturn<TTag>;
 	}
 	if (tag === h.Fragment) {
-		return children as ReturnType<typeof h>;
+		return children as TagReturn<TTag>;
 	}
 	if (typeof tag === "function") {
-		return tag({ ...attributes, children }) as ReturnType<typeof h>;
+		const value = tag({ ...attributes, children }) as ReturnType<typeof h>;
+		if (value instanceof Promise) {
+			const value_safe = value as Promise<unknown>;
+			const signal = Signal_fromPromise(value_safe);
+			const wrapper = () => {
+				const state = signal();
+				if (state._type === "fulfilled") {
+					return state.value;
+				} else if (state._type === "pending") {
+					if (typeof tag.Pending === "function") {
+						return tag.Pending();
+					}
+					return undefined;
+				} else if (state._type === "rejected") {
+					if (typeof tag.Rejected === "function") {
+						return tag.Rejected();
+					}
+					console.error(state.error);
+					return undefined;
+				}
+				return undefined;
+			};
+			return wrapper as TagReturn<TTag>;
+		}
+		return value as TagReturn<TTag>;
 	}
-
-	return undefined as ReturnType<typeof h>;
+	return undefined as TagReturn<TTag>;
 }
 
 h.Fragment = function Fragment() {};
@@ -121,7 +145,9 @@ function unmount(node: NodeExtended) {
 	node.parentNode?.removeChild(node);
 }
 
-type Tag = keyof JSX.IntrinsicElements | ((...args: any[]) => any);
+type Tag =
+	| keyof JSX.IntrinsicElements
+	| (((...args: any[]) => unknown) & { Pending?: unknown; Rejected?: unknown });
 
 type TagAttributes<TTag> = TTag extends keyof JSX.IntrinsicElements
 	? JSX.IntrinsicElements[TTag]
