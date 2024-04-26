@@ -12,8 +12,7 @@ type Mode =
 	| "async-loader-resolve"
 	| "async-loader-reject";
 
-export default Hash;
-export function Hash(): JSX.Element {
+export default function (): JSX.Element {
 	title("Hash");
 
 	const locationHash_unsafe = (location.hash.substring(1) as Mode) || undefined;

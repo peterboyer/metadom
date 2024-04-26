@@ -1,7 +1,6 @@
 import { title } from "./shared/nav.js";
 
-export default Home;
-export function Home(): JSX.Element {
+export default function Home(): JSX.Element {
 	title("Home");
 
 	return (

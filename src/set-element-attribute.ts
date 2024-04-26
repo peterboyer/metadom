@@ -6,6 +6,7 @@ export function setElementAttribute(
 	element: ElementExtended,
 	key: string,
 	value: unknown,
+	attributes: Record<string, unknown>,
 ): void {
 	if (key === "class") {
 		const value_unsafe = value as string;
@@ -31,16 +32,43 @@ export function setElementAttribute(
 			element.checked = !!value;
 		}
 	} else if (key === "onchangevalue" && element instanceof HTMLInputElement) {
-		// TODO, default to string for unhandled
-		// TODO, onchangevalue support for all other inputs
 		const value_unsafe = value as (value: unknown) => void;
-		setEventListener(
-			element,
-			"change",
-			(event: HTMLElementEventMap["change"]) => {
-				value_unsafe((event.target! as typeof element).checked);
-			},
-		);
+		const type_unsafe = attributes[
+			"type"
+		] as JSX.IntrinsicElements["input"]["type"];
+		if (type_unsafe === "number" || type_unsafe === "range") {
+			setEventListener(
+				element,
+				"input",
+				(event: HTMLElementEventMap["change"]) => {
+					value_unsafe(parseInt((event.target as typeof element).value, 10));
+				},
+			);
+		} else if (type_unsafe === "checkbox" || type_unsafe === "radio") {
+			setEventListener(
+				element,
+				"input",
+				(event: HTMLElementEventMap["change"]) => {
+					value_unsafe((event.target as typeof element).checked);
+				},
+			);
+		} else if (type_unsafe === "file") {
+			setEventListener(
+				element,
+				"input",
+				(event: HTMLElementEventMap["change"]) => {
+					value_unsafe((event.target as typeof element).files);
+				},
+			);
+		} else {
+			setEventListener(
+				element,
+				"input",
+				(event: HTMLElementEventMap["change"]) => {
+					value_unsafe((event.target as typeof element).value);
+				},
+			);
+		}
 	} else if (key.startsWith("on")) {
 		const type_unsafe = key.substring(2) as keyof HTMLElementEventMap;
 		const value_unsafe = value as () => unknown;

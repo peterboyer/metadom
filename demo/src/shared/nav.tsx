@@ -14,6 +14,9 @@ export function Nav(): JSX.Element {
 					<li>
 						<a href="/hash">Hash</a>
 					</li>
+					<li>
+						<a href="/form">Form</a>
+					</li>
 				</ul>
 			</nav>
 		</>

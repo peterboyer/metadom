@@ -28,27 +28,36 @@ export namespace JSX {
 		input: {
 			name: Recommended<string>;
 		} & (
-			| InputVariant<"button", never>
-			| InputVariant<"checkbox", boolean>
 			| InputVariant<"color", string>
 			| InputVariant<"date", string>
 			| InputVariant<"datetime-local", string>
 			| InputVariant<"email", string>
-			| InputVariant<"file", globalThis.File>
-			| InputVariant<"hidden", unknown>
-			| InputVariant<"image", string>
-			| InputVariant<"month", number>
-			| InputVariant<"number", number>
+			| InputVariant<"hidden", string>
+			| InputVariant<"month", string>
 			| InputVariant<"password", string>
-			| InputVariant<"radio", boolean>
-			| InputVariant<"range", number>
-			| InputVariant<"reset", never>
 			| InputVariant<"search", string>
-			| InputVariant<"submit", never>
 			| InputVariant<"tel", string>
+			| InputVariant<"text", string>
 			| InputVariant<"time", string>
 			| InputVariant<"url", string>
-			| InputVariant<"week", number>
+			| InputVariant<"week", string>
+			// use .value as number
+			| InputVariant<"number", number>
+			| (InputVariant<"range", number> & {
+					min: number;
+					max: number;
+					step?: number;
+			  })
+			// use .checked
+			| InputVariant<"checkbox", boolean>
+			| InputVariant<"radio", boolean>
+			// use .files
+			| InputVariant<"file", FileList>
+			// never
+			| InputVariant<"image", never>
+			| InputVariant<"button", never>
+			| InputVariant<"submit", never>
+			| InputVariant<"reset", never>
 		);
 	};
 }
@@ -62,9 +71,9 @@ type InputVariant<TType extends string, TValue> = {
 /**
  * Allow a property to be passed a function for a signal-driven value.
  */
-export type Reactive<T> = T | (() => T);
+type Reactive<T> = T | (() => T);
 
 /**
  * Require an explicit `undefined` value to opt-out of an optional property.
  */
-export type Recommended<T> = undefined | T;
+type Recommended<T> = undefined | T;

@@ -12,6 +12,8 @@ function App(): JSX.Element {
 					return import("./home.js");
 				} else if (routing.url().pathname === "/hash") {
 					return import("./hash.js");
+				} else if (routing.url().pathname === "/form") {
+					return import("./form.js");
 				} else {
 					return;
 				}

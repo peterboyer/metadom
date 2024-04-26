@@ -22,11 +22,11 @@ export function h<TTag extends Tag>(
 					node._disposers.add(
 						reaction(
 							() => value_unsafe(),
-							(value) => setElementAttribute(node, key, value),
+							(value) => setElementAttribute(node, key, value, attributes),
 						),
 					);
 				} else {
-					setElementAttribute(node, key, value);
+					setElementAttribute(node, key, value, attributes);
 				}
 			}
 		}
