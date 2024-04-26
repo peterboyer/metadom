@@ -31,44 +31,21 @@ export function setElementAttribute(
 		if (element.type === "radio") {
 			element.checked = !!value;
 		}
-	} else if (key === "onchangevalue" && element instanceof HTMLInputElement) {
+	} else if (
+		(key === "onchangevalue" || key === "oninputvalue") &&
+		element instanceof HTMLInputElement
+	) {
 		const value_unsafe = value as (value: unknown) => void;
 		const type_unsafe = attributes[
 			"type"
 		] as JSX.IntrinsicElements["input"]["type"];
-		if (type_unsafe === "number" || type_unsafe === "range") {
-			setEventListener(
-				element,
-				"input",
-				(event: HTMLElementEventMap["change"]) => {
-					value_unsafe(parseInt((event.target as typeof element).value, 10));
-				},
-			);
-		} else if (type_unsafe === "checkbox" || type_unsafe === "radio") {
-			setEventListener(
-				element,
-				"input",
-				(event: HTMLElementEventMap["change"]) => {
-					value_unsafe((event.target as typeof element).checked);
-				},
-			);
-		} else if (type_unsafe === "file") {
-			setEventListener(
-				element,
-				"input",
-				(event: HTMLElementEventMap["change"]) => {
-					value_unsafe((event.target as typeof element).files);
-				},
-			);
-		} else {
-			setEventListener(
-				element,
-				"input",
-				(event: HTMLElementEventMap["change"]) => {
-					value_unsafe((event.target as typeof element).value);
-				},
-			);
-		}
+		setEventListener(
+			element,
+			key === "oninputvalue" ? "input" : "change",
+			(event: HTMLElementEventMap["change"]) => {
+				value_unsafe(getEventValue(event, type_unsafe));
+			},
+		);
 	} else if (key.startsWith("on")) {
 		const type_unsafe = key.substring(2) as keyof HTMLElementEventMap;
 		const value_unsafe = value as () => unknown;
@@ -101,4 +78,23 @@ function setEventListener<TEvent extends keyof HTMLElementEventMap>(
 		event,
 		disposer,
 	);
+}
+function getEventValue(
+	event: Event,
+	type: JSX.IntrinsicElements["input"]["type"],
+): unknown {
+	const element = event.target as HTMLInputElement;
+	if (type === "number" || type === "range") {
+		const value = parseInt(element.value, 10);
+		return !Number.isNaN(value) ? value : undefined;
+	} else if (type === "checkbox" || type === "radio") {
+		const value = element.checked;
+		return typeof value === "boolean" ? value : undefined;
+	} else if (type === "file") {
+		const value = element.files;
+		return value instanceof FileList ? value : undefined;
+	} else {
+		const value = element.value;
+		return typeof value === "string" ? value : undefined;
+	}
 }

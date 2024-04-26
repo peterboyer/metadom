@@ -8,11 +8,11 @@ export namespace JSX {
 		{
 			id?: string;
 			role?: string;
-			class?: Reactive<string>;
+			class?: Reactive<string> | undefined;
 		} & {
-			[EventType in keyof HTMLElementEventMap as `on${EventType}`]?: (
-				event: HTMLElementEventMap[EventType],
-			) => void;
+			[EventType in keyof HTMLElementEventMap as `on${EventType}`]?:
+				| ((event: HTMLElementEventMap[EventType]) => void)
+				| undefined;
 		}
 	> & {
 		a: {
@@ -23,7 +23,7 @@ export namespace JSX {
 			alt: Recommended<Reactive<string>>;
 		};
 		label: {
-			for: Recommended<string>;
+			for?: string | undefined;
 		};
 		input: {
 			name: Recommended<string>;
@@ -46,7 +46,7 @@ export namespace JSX {
 			| (InputVariant<"range", number> & {
 					min: number;
 					max: number;
-					step?: number;
+					step?: number | undefined;
 			  })
 			// use .checked
 			| InputVariant<"checkbox", boolean>
@@ -64,8 +64,9 @@ export namespace JSX {
 
 type InputVariant<TType extends string, TValue> = {
 	type: TType;
-	value: Recommended<Reactive<TValue>>;
-	onchangevalue: Recommended<(value: TValue) => void>;
+	value?: Reactive<TValue> | undefined;
+	oninputvalue?: ((value: TValue) => void) | undefined;
+	onchangevalue?: ((value: TValue) => void) | undefined;
 };
 
 /**

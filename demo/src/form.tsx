@@ -26,9 +26,12 @@ export default function (): JSX.Element {
 					{type}
 					<input
 						name={type}
-						type={type as any}
+						type={type}
 						value={undefined}
-						onchangevalue={console.log}
+						oninputvalue={(value: unknown) => console.log("input", type, value)}
+						onchangevalue={(value: unknown) =>
+							console.log("change", type, value)
+						}
 					/>
 				</label>
 			))}
@@ -40,8 +43,8 @@ export default function (): JSX.Element {
 					type="range"
 					min={0}
 					max={11}
-					value={undefined}
-					onchangevalue={console.log}
+					oninputvalue={(value) => console.log("input", "range", value)}
+					onchangevalue={(value) => console.log("change", "range", value)}
 				/>
 			</label>
 		</form>
