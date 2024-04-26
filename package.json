@@ -1,7 +1,7 @@
 {
 	"name": "metadom",
 	"version": "0.0.0",
-	"description": "Metadom.",
+	"description": "Meta-DOM. Signal-driven, declarative UI.",
 	"repository": "github:peterboyer/metadom",
 	"author": "Peter Boyer <https://github.com/peterboyer>",
 	"license": "MIT",
