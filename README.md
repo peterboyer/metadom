@@ -63,9 +63,9 @@ Add to your project's `vite.config.ts`:
 ```diff
 + import Metadom from "metadom/config/vite";
 
-export default defineConfig({
-+ plugins: [Metadom()],
-});
+  export default defineConfig({
++   plugins: [Metadom()],
+  });
 ```
 
 ## TypeScript
@@ -75,9 +75,9 @@ export default defineConfig({
 Add to your project's `tsconfig.json`:
 
 ```diff
-{
-+ "extends": ["metadom/config/tsconfig.json"],
-}
+  {
++   "extends": ["metadom/config/tsconfig.json"],
+  }
 ```
 
 ### Global JSX Namespace
@@ -88,11 +88,11 @@ components' return types, you may make it globally available.
 #### via `tsconfig.json`:
 
 ```diff
-{
-  "compilerOptions": {
-+   "types": ["metadom/globals"],
+  {
+    "compilerOptions": {
++     "types": ["metadom/globals"],
+    }
   }
-}
 ```
 
 #### via entry-point:
