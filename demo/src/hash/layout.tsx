@@ -1,7 +1,7 @@
 import { assignLayout } from "metadom";
 
 export function Layout() {
-	return <p>Content.</p>;
+	return "Content.";
 }
 
 assignLayout(Layout, (_, children) => {
