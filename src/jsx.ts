@@ -37,7 +37,8 @@ export function h<TTag extends Tag>(
 		return children as TagReturn<TTag>;
 	}
 	if (typeof tag === "function") {
-		const value = tag({ ...attributes, children }) as ReturnType<typeof h>;
+		const props = { ...attributes, children };
+		const value = tag(props) as ReturnType<typeof h>;
 		const Layout = typeof tag.Layout === "function" ? tag.Layout : undefined;
 		if (value instanceof Promise) {
 			const value_safe = value as Promise<unknown>;
@@ -51,16 +52,16 @@ export function h<TTag extends Tag>(
 				if (stateValue._type === "fulfilled") {
 					return stateValue.value;
 				} else if (stateValue._type === "pending") {
-					return Pending ? Pending() : undefined;
+					return Pending ? Pending(props) : undefined;
 				} else if (stateValue._type === "rejected") {
 					if (!Rejected) console.error(stateValue.error);
-					return Rejected ? Rejected(stateValue.error) : undefined;
+					return Rejected ? Rejected(props, stateValue.error) : undefined;
 				}
 				return undefined;
 			};
-			return (Layout ? Layout(wrapper) : wrapper) as TagReturn<TTag>;
+			return (Layout ? Layout(props, wrapper) : wrapper) as TagReturn<TTag>;
 		}
-		return (Layout ? Layout(value) : value) as TagReturn<TTag>;
+		return (Layout ? Layout(props, value) : value) as TagReturn<TTag>;
 	}
 	return undefined as TagReturn<TTag>;
 }
@@ -142,6 +143,27 @@ function unmount(node: NodeExtended) {
 	node._disposers?.forEach((disposer) => disposer());
 	node._disposersKeyed?.forEach((disposer) => disposer());
 	node.parentNode?.removeChild(node);
+}
+
+export function assignLayout<TComponent extends (...args: any[]) => any>(
+	component: TComponent,
+	callback: (props: Parameters<TComponent>[0], children: unknown) => unknown,
+): void {
+	Object.assign(component, { Layout: callback });
+}
+
+export function assignAsyncPending<TComponent extends (...args: any[]) => any>(
+	component: TComponent,
+	callback: (props: Parameters<TComponent>[0]) => unknown,
+): void {
+	Object.assign(component, { Pending: callback });
+}
+
+export function assignAsyncRejected<TComponent extends (...args: any[]) => any>(
+	component: TComponent,
+	callback: (props: Parameters<TComponent>[0], error: unknown) => unknown,
+): void {
+	Object.assign(component, { Rejected: callback });
 }
 
 type Tag =

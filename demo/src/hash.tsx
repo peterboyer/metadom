@@ -3,7 +3,8 @@ import { Signal, reaction } from "metadom";
 import { title } from "./shared/nav.js";
 import { Counter } from "./hash/counter.js";
 import { Weather } from "./hash/weather.js";
-import { Async, AsyncWithLoader } from "./hash/async.js";
+import { Async } from "./hash/async.js";
+import { Async as AsyncWithLoader } from "./hash/async-with-loader.js";
 
 type Mode =
 	| "counter"
