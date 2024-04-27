@@ -54,22 +54,23 @@ export default function (): JSX.Element {
 				))}
 			</fieldset>
 			{() => {
-				if (mode() === "counter") {
+				const modeValue = mode();
+				if (modeValue === "counter") {
 					return <Counter />;
 				}
-				if (mode() === "weather") {
+				if (modeValue === "weather") {
 					return <Weather />;
 				}
-				if (mode() === "layout") {
+				if (modeValue === "layout") {
 					return <Layout />;
 				}
-				if (mode() === "async") {
+				if (modeValue === "async") {
 					return <Async />;
 				}
-				if (mode() === "async-loader-resolve") {
+				if (modeValue === "async-loader-resolve") {
 					return <AsyncWithLoader mode="resolve" />;
 				}
-				if (mode() === "async-loader-reject") {
+				if (modeValue === "async-loader-reject") {
 					return <AsyncWithLoader mode="reject" />;
 				}
 				return null;
