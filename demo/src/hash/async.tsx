@@ -4,7 +4,7 @@ export function getData(
 	return new Promise((resolve, reject) => {
 		setTimeout(() => {
 			const value = new Date().toISOString();
-			return mode === "reject" ? reject(value) : resolve(value);
+			return mode === "reject" ? reject(new Error(value)) : resolve(value);
 		}, 1000);
 	});
 }
@@ -14,18 +14,30 @@ export async function Async(): Promise<JSX.Element> {
 	return <div>{data}</div>;
 }
 
-export async function AsyncWithLoader({
-	mode,
-}: {
+type AsyncWithLoaderProps = {
 	mode: NonNullable<Parameters<typeof getData>[0]>;
-}) {
-	return <div>{await getData(mode)}</div>;
+};
+
+export async function AsyncWithLoader({ mode }: AsyncWithLoaderProps) {
+	const data = await getData(mode);
+	return <div>{data}</div>;
 }
 
+// Render as the wrapper around all states of the Component.
+AsyncWithLoader.Layout = function (children: unknown) {
+	return <section style="border-color:red;">{children}</section>;
+};
+
+// Render while Component's Promise is pending.
 AsyncWithLoader.Pending = function () {
 	return <div>Loading</div>;
 };
 
-AsyncWithLoader.Rejected = function () {
-	return <div>Error</div>;
+// Render if the Component's Promise rejects.
+AsyncWithLoader.Rejected = function (error: unknown) {
+	return (
+		<div>
+			Error {"" + error} {JSON.stringify(error)}
+		</div>
+	);
 };

@@ -38,30 +38,29 @@ export function h<TTag extends Tag>(
 	}
 	if (typeof tag === "function") {
 		const value = tag({ ...attributes, children }) as ReturnType<typeof h>;
+		const Layout = typeof tag.Layout === "function" ? tag.Layout : undefined;
 		if (value instanceof Promise) {
 			const value_safe = value as Promise<unknown>;
-			const signal = Signal_fromPromise(value_safe);
+			const state = Signal_fromPromise(value_safe);
+			const Pending =
+				typeof tag.Pending === "function" ? tag.Pending : undefined;
+			const Rejected =
+				typeof tag.Rejected === "function" ? tag.Rejected : undefined;
 			const wrapper = () => {
-				const state = signal();
-				if (state._type === "fulfilled") {
-					return state.value;
-				} else if (state._type === "pending") {
-					if (typeof tag.Pending === "function") {
-						return tag.Pending();
-					}
-					return undefined;
-				} else if (state._type === "rejected") {
-					if (typeof tag.Rejected === "function") {
-						return tag.Rejected();
-					}
-					console.error(state.error);
-					return undefined;
+				const stateValue = state();
+				if (stateValue._type === "fulfilled") {
+					return stateValue.value;
+				} else if (stateValue._type === "pending") {
+					return Pending ? Pending() : undefined;
+				} else if (stateValue._type === "rejected") {
+					if (!Rejected) console.error(stateValue.error);
+					return Rejected ? Rejected(stateValue.error) : undefined;
 				}
 				return undefined;
 			};
-			return wrapper as TagReturn<TTag>;
+			return (Layout ? Layout(wrapper) : wrapper) as TagReturn<TTag>;
 		}
-		return value as TagReturn<TTag>;
+		return (Layout ? Layout(value) : value) as TagReturn<TTag>;
 	}
 	return undefined as TagReturn<TTag>;
 }
@@ -147,7 +146,11 @@ function unmount(node: NodeExtended) {
 
 type Tag =
 	| keyof JSX.IntrinsicElements
-	| (((...args: any[]) => unknown) & { Pending?: unknown; Rejected?: unknown });
+	| (((...args: any[]) => unknown) & {
+			Layout?: unknown;
+			Pending?: unknown;
+			Rejected?: unknown;
+	  });
 
 type TagAttributes<TTag> = TTag extends keyof JSX.IntrinsicElements
 	? JSX.IntrinsicElements[TTag]

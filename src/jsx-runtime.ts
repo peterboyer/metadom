@@ -9,6 +9,7 @@ export namespace JSX {
 			id?: string;
 			role?: string;
 			class?: Reactive<string> | undefined;
+			style?: Reactive<string> | undefined;
 		} & {
 			[EventType in keyof HTMLElementEventMap as `on${EventType}`]?:
 				| ((event: HTMLElementEventMap[EventType]) => void)
