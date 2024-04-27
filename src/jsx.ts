@@ -105,7 +105,7 @@ function walk(node: Node, value: unknown): void {
 		"default" in value &&
 		typeof value.default === "function"
 	) {
-		walk(node, value.default());
+		walk(node, h(value.default as Tag, {}));
 	}
 }
 
