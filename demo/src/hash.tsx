@@ -3,12 +3,14 @@ import { Signal, reaction } from "metadom";
 import { title } from "./shared/nav.js";
 import { Counter } from "./hash/counter.js";
 import { Weather } from "./hash/weather.js";
+import { Layout } from "./hash/layout.js";
 import { Async } from "./hash/async.js";
 import { Async as AsyncWithLoader } from "./hash/async-with-loader.js";
 
 type Mode =
 	| "counter"
 	| "weather"
+	| "layout"
 	| "async"
 	| "async-loader-resolve"
 	| "async-loader-reject";
@@ -33,6 +35,7 @@ export default function (): JSX.Element {
 					new Map<Mode, string>([
 						["counter", "Counter"],
 						["weather", "Weather"],
+						["layout", "Layout"],
 						["async", "Async"],
 						["async-loader-resolve", "Async (w/ Loader) Resolve"],
 						["async-loader-reject", "Async (w/ Loader) Reject"],
@@ -56,6 +59,9 @@ export default function (): JSX.Element {
 				}
 				if (mode() === "weather") {
 					return <Weather />;
+				}
+				if (mode() === "layout") {
+					return <Layout />;
 				}
 				if (mode() === "async") {
 					return <Async />;
