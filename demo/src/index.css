@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+	.shadow-box {
+		box-shadow: 2px 2px #bbb;
+	}
+
+	.shadow-box-inset {
+		box-shadow: inset 2px 2px #ddd;
+	}
+}
