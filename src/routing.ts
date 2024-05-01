@@ -1,6 +1,9 @@
 import { Signal } from "./signal.js";
 
 export const url = Signal(new URL(document.URL));
+window.addEventListener("popstate", () => {
+	url(new URL(document.URL));
+});
 
 export function go(delta: number = 0): void {
 	history.go(delta);
