@@ -11,7 +11,7 @@ export namespace JSX {
 		img: ElementAttributes_img;
 		label: ElementAttributes_label;
 		input: ElementAttributes_input;
-	};
+	} & Record<keyof SVGElementTagNameMap, Record<string, string>>;
 
 	type ElementAttributes_a = {
 		href: Recommended<Reactive<string>>;
