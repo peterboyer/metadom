@@ -1,6 +1,6 @@
 import { Signal } from "metadom";
 
-export function Weather(): JSX.Element {
+export default function Fetch(): JSX.Element {
 	const state = Signal<
 		| { _type: "Ready" }
 		| { _type: "Loading" }
@@ -22,7 +22,7 @@ export function Weather(): JSX.Element {
 	};
 
 	return (
-		<div>
+		<div class="space-y-4">
 			<pre>{() => JSON.stringify(state(), undefined, 2)}</pre>
 			<div>
 				<button onclick={onFetch}>fetch</button>

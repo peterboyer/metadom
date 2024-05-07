@@ -1,10 +1,6 @@
-import { title } from "./shared/nav.js";
-
-export default function (): JSX.Element {
-	title("Form");
-
+export default function Inputs(): JSX.Element {
 	return (
-		<form>
+		<form class="space-y-4">
 			{(
 				[
 					"text",
@@ -35,7 +31,6 @@ export default function (): JSX.Element {
 					/>
 				</label>
 			))}
-			<hr />
 			<label for={undefined}>
 				range
 				<input

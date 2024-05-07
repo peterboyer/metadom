@@ -1,17 +1,23 @@
 import { Signal } from "metadom";
 
-export function Counter(): JSX.Element {
+export default function State(): JSX.Element {
 	const count = Signal(0);
 
 	return (
-		<div>
+		<div class="space-y-4">
 			<dl>
 				<dt>Count</dt>
-				<dd>{count}</dd>
-				<dt>Count * 10</dt>
-				<dd>{() => count() * 10}</dd>
+				<dd>
+					<pre>{count}</pre>
+				</dd>
 			</dl>
-			<div>
+			<dl>
+				<dt>Count * 10</dt>
+				<dd>
+					<pre>{() => count() * 10}</pre>
+				</dd>
+			</dl>
+			<div class="space-x-2">
 				<button onclick={() => count((a) => a + 1)}>increment</button>
 				<button onclick={() => count((a) => a - 1)}>decrement</button>
 			</div>
