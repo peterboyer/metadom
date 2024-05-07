@@ -8,6 +8,10 @@ export function setElementAttribute(
 	value: unknown,
 	attributes: Record<string, unknown>,
 ): void {
+	if (value === undefined) {
+		return;
+	}
+
 	if (key === "class") {
 		const value_unsafe = value as string;
 		element.className = value_unsafe;
@@ -51,8 +55,8 @@ export function setElementAttribute(
 		const value_unsafe = value as () => unknown;
 		setEventListener(element, type_unsafe, value_unsafe);
 	} else {
-		const element_unsafe = element as any;
-		element_unsafe[key] = value;
+		const value_safe = `${value}`;
+		element.setAttribute(key, value_safe);
 	}
 }
 

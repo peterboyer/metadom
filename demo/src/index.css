@@ -11,3 +11,61 @@
 		box-shadow: inset 2px 2px #ddd;
 	}
 }
+
+a {
+	@apply text-sky-600;
+	@apply hover:text-black;
+}
+
+hr {
+	@apply border-black;
+}
+
+button {
+	@apply py-1 px-2 shadow-box border border-black cursor-pointer;
+	@apply hover:text-white hover:bg-black;
+	@apply aria-selected:text-white aria-selected:bg-sky-600;
+	@apply aria-selected:hover:text-white aria-selected:hover:bg-black;
+}
+
+a.button {
+	@apply py-1 px-2 shadow-box border border-black cursor-pointer;
+	@apply hover:text-white hover:bg-black;
+	@apply aria-selected:text-white aria-selected:bg-sky-600;
+	@apply aria-selected:hover:text-white aria-selected:hover:bg-black;
+}
+
+label {
+	@apply block;
+}
+
+input {
+	&[type="checkbox"],
+	&[type="radio"],
+	&[type="range"],
+	&[type="file"] {
+		@apply ml-2;
+	}
+
+	&:not([type="checkbox"], [type="radio"], [type="range"], [type="file"]) {
+		@apply block py-1 px-2 shadow-box-inset border border-black;
+	}
+}
+
+code {
+	@apply text-red-600 bg-red-100;
+	@apply px-1 py-0.5 rounded;
+}
+
+pre {
+	@apply text-gray-600 bg-gray-100;
+	@apply px-1 py-0.5 rounded;
+}
+
+fieldset {
+	@apply border border-gray-400 px-4 py-1 pb-2;
+}
+
+legend {
+	@apply text-sm px-1 -mx-1;
+}

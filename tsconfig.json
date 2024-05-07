@@ -11,6 +11,7 @@
 			"metadom/jsx-runtime": ["src/jsx-runtime.ts"],
 			"metadom/globals": ["src/globals.ts"]
 		},
+		"types": ["vite/client"],
 		"plugins": [{ "name": "typescript-plugin-css-modules" }]
 	}
 }

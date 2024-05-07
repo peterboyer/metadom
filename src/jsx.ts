@@ -47,7 +47,7 @@ export function h<TTag extends Tag>(
 				typeof tag.Pending === "function" ? tag.Pending : undefined;
 			const Rejected =
 				typeof tag.Rejected === "function" ? tag.Rejected : undefined;
-			const wrapper = () => {
+			const children = () => {
 				const stateValue = state();
 				if (stateValue._type === "fulfilled") {
 					return stateValue.value;
@@ -59,7 +59,7 @@ export function h<TTag extends Tag>(
 				}
 				return undefined;
 			};
-			return (Layout ? Layout(props, wrapper) : wrapper) as TagReturn<TTag>;
+			return (Layout ? Layout(props, children) : children) as TagReturn<TTag>;
 		}
 		return (Layout ? Layout(props, value) : value) as TagReturn<TTag>;
 	}
