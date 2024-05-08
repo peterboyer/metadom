@@ -14,11 +14,11 @@ export namespace JSX {
 	};
 
 	type ElementAttributes_a = {
-		href: Recommended<Reactive<string>>;
+		href: Reactive<string> | undefined;
 	};
 	type ElementAttributes_img = {
-		src: Recommended<Reactive<string>>;
-		alt: Recommended<Reactive<string>>;
+		src: Reactive<string> | undefined;
+		alt: Reactive<string> | undefined;
 	};
 
 	type ElementAttributes_label = {
@@ -26,7 +26,7 @@ export namespace JSX {
 	};
 
 	type ElementAttributes_input = {
-		name: Recommended<string>;
+		name: string | undefined;
 		autocomplete?: AutoFill | undefined;
 	} & (
 		| InputVariant<"color", string>
@@ -90,8 +90,3 @@ type InputVariant<TType extends string, TValue> = {
  * Allow a property to be passed a function for a signal-driven value.
  */
 type Reactive<T> = T | (() => T);
-
-/**
- * Require an explicit `undefined` value to opt-out of an optional property.
- */
-type Recommended<T> = undefined | T;
