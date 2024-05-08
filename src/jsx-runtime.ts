@@ -27,6 +27,7 @@ export namespace JSX {
 
 	type ElementAttributes_input = {
 		name: Recommended<string>;
+		autocomplete?: AutoFill | undefined;
 	} & (
 		| InputVariant<"color", string>
 		| InputVariant<"date", string>

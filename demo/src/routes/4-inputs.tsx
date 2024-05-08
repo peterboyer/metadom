@@ -28,6 +28,13 @@ export default function Inputs(): JSX.Element {
 						onchangevalue={(value: unknown) =>
 							console.log("change", type, value)
 						}
+						autocomplete={
+							type === "email"
+								? "username"
+								: type === "password"
+									? "current-password"
+									: undefined
+						}
 					/>
 				</label>
 			))}
