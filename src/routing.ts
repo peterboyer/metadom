@@ -1,6 +1,7 @@
 import { Signal } from "./signal.js";
 
 export const url = Signal(new URL(document.URL));
+
 window.addEventListener("popstate", () => {
 	url(new URL(document.URL));
 });

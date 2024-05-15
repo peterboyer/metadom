@@ -92,10 +92,8 @@ function walk(node: $Node, value: unknown): void {
 			slot,
 			reaction(
 				() => value_unsafe(),
-				(value) => {
-					slot._children?.forEach(unmount);
-					walk(slot, value);
-				},
+				(value) => walk(slot, value),
+				() => slot._children?.forEach(unmount),
 			),
 		);
 	} else if (value instanceof Promise) {

@@ -16,7 +16,6 @@ export default async function AsyncWithLoader(): Promise<JSX.Element> {
 }
 
 assignLayout(AsyncWithLoader, (_, children) => {
-	console.log("layout");
 	return (
 		<>
 			<pre style="border-color:red;">{children}</pre>

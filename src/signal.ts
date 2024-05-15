@@ -39,29 +39,37 @@ export function Signal<T>(initialValue: T): Signal<T> {
 }
 
 export function reaction<T>(
-	fn: () => T,
-	callback?: (result: T) => void,
+	input: () => T,
+	effect?: (result: T) => void,
+	cleanup?: () => void,
 ): Disposer {
+	let isDisposed = false;
 	const signals = new Set<Signal>();
-	const disposer = () => {
+	const evaluate = () => {
+		cleanup?.();
+
 		signals.forEach((signal) => signal.callbacks.delete(evaluate));
 		signals.clear();
-	};
 
-	const evaluate = () => {
-		disposer();
+		if (isDisposed) {
+			return;
+		}
 
 		const onSignal_reset = onSignal;
 		onSignal = (signal) => signals.add(signal);
-		const result = fn();
+		const result = input();
 		onSignal = onSignal_reset;
 
-		callback?.(result);
+		effect?.(result);
 
 		signals.forEach((signal) => signal.callbacks.add(evaluate));
 	};
 
 	evaluate();
 
-	return disposer;
+	return () => {
+		isDisposed = true;
+		signals.forEach((signal) => signal.callbacks.delete(evaluate));
+		signals.clear();
+	};
 }
