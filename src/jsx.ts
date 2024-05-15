@@ -1,5 +1,12 @@
 import type { Disposer } from "./disposer.js";
-import type { NodeExtended, ElementExtended } from "./node.js";
+import {
+	assignDisposer,
+	createSlot,
+	getChildren,
+	insert,
+	is$Element,
+	type $Node,
+} from "./node.js";
 import { reaction } from "./signal.js";
 import { setElementAttribute } from "./set-element-attribute.js";
 import { Signal_fromPromise } from "./signal-from-promise.js";
@@ -10,16 +17,15 @@ export function h<TTag extends Tag>(
 	...children: TagChildren
 ): TagReturn<TTag> {
 	if (typeof tag === "string") {
-		const node = Object.assign(document.createElement(tag), {
-			_disposers: new Set<Disposer>(),
-		}) satisfies ElementExtended;
+		const node: $Node = document.createElement(tag);
 		if (attributes) {
 			for (const key in attributes) {
 				const props_unsafe = attributes as Record<string, unknown>;
 				const value = props_unsafe[key];
 				if (typeof value === "function" && !key.startsWith("on")) {
 					const value_unsafe = value as () => unknown;
-					node._disposers.add(
+					assignDisposer(
+						node,
 						reaction(
 							() => value_unsafe(),
 							(value) => setElementAttribute(node, key, value, attributes),
@@ -68,52 +74,44 @@ export function h<TTag extends Tag>(
 
 h.Fragment = function Fragment() {};
 
-function walk(node: Node, value: unknown): void {
+function walk(node: $Node, value: unknown): void {
 	if (typeof value === "number") {
-		node.appendChild(document.createTextNode(value.toString()));
+		insert(node, document.createTextNode(value.toString(10)));
 	} else if (typeof value === "string") {
-		node.appendChild(document.createTextNode(value));
+		insert(node, document.createTextNode(value));
 	} else if (Array.isArray(value)) {
 		value.forEach((value) => walk(node, value));
 	} else if (value instanceof Node) {
-		node.appendChild(value);
+		insert(node, value);
 	} else if (typeof value === "function") {
-		const slot = Object.assign(document.createElement("slot"), {
-			_disposers: new Set<Disposer>(),
-		}) satisfies ElementExtended;
-		slot.setAttribute(":type", "function");
-		node.appendChild(slot);
+		const slot = createSlot();
+		insert(node, slot);
 		const value_unsafe = value as () => unknown;
-		slot._disposers.add(
+		assignDisposer(
+			slot,
 			reaction(
 				() => value_unsafe(),
 				(value) => {
-					Array.from(slot.childNodes).forEach(unmount);
+					slot._children?.forEach(unmount);
 					walk(slot, value);
 				},
 			),
 		);
 	} else if (value instanceof Promise) {
+		const slot = createSlot();
+		insert(node, slot);
 		const value_unsafe = value as Promise<unknown>;
-		const slot = document.createElement("slot");
-		slot.setAttribute(":type", "promise");
-		node.appendChild(slot);
 		value_unsafe.then((result) => walk(slot, result));
-	} else if (
-		value &&
-		typeof value === "object" &&
-		"default" in value &&
-		typeof value.default === "function"
-	) {
-		walk(node, h(value.default as Tag, {}));
+	} else if (value && typeof value === "object" && "default" in value) {
+		walk(node, value.default);
 	}
 }
 
 export function mount(
-	component: unknown,
+	value: unknown,
 	nodeOrId?: Node | string | undefined,
 ): Disposer {
-	let node: Node;
+	let node: $Node;
 	if (nodeOrId === undefined) {
 		node = document.body;
 	} else if (typeof nodeOrId === "string") {
@@ -125,24 +123,28 @@ export function mount(
 	} else {
 		node = nodeOrId;
 	}
-	const slot = Object.assign(document.createElement("slot"), {
-		_disposers: new Set<Disposer>(),
-	}) satisfies ElementExtended;
-	slot.setAttribute(":type", "root");
-	walk(slot, component);
-	node.appendChild(slot);
+	console.debug("root:mount", { node, value });
+	walk(node, value);
 	return () => {
-		Array.from(slot.childNodes).forEach(unmount);
-		slot._disposers.forEach((disposer) => disposer());
-		node.removeChild(slot);
+		console.debug("root:unmount", { node, value });
+		node._children?.forEach(unmount);
+		node._disposers?.forEach((disposer) => disposer());
+		node._disposersKeyed?.forEach((disposer) => disposer());
 	};
 }
 
-function unmount(node: NodeExtended) {
-	Array.from(node.childNodes).forEach(unmount);
+function unmount(node: $Node) {
+	console.debug("unmount", { node });
+	if (is$Element(node) && node._parent && node.parentNode) {
+		getChildren(node._parent).delete(node);
+		node.parentNode.removeChild(node);
+	}
+	node._children?.forEach(unmount);
+	node._children = undefined;
 	node._disposers?.forEach((disposer) => disposer());
+	node._disposers = undefined;
 	node._disposersKeyed?.forEach((disposer) => disposer());
-	node.parentNode?.removeChild(node);
+	node._disposersKeyed = undefined;
 }
 
 export function assignLayout<TComponent extends (...args: any[]) => any>(
