@@ -2,7 +2,6 @@ import type { Disposer } from "./disposer.js";
 import {
 	assignDisposer,
 	createSlot,
-	getChildren,
 	insert,
 	is$Element,
 	type $Node,
@@ -138,9 +137,8 @@ export function mount(
 }
 
 function unmount(node: $Node) {
-	console.debug("unmount", { node });
-	if (is$Element(node) && node._parent && node.parentNode) {
-		getChildren(node._parent).delete(node);
+	node._parent?._children?.delete(node);
+	if (is$Element(node) && node.parentNode) {
 		node.parentNode.removeChild(node);
 	}
 	node._children?.forEach(unmount);

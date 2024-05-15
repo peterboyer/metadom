@@ -106,8 +106,3 @@ export function assignChild(node: $Node, child: $Node): void {
 	node._children = node._children ?? new Set();
 	node._children.add(child);
 }
-
-const empty: Set<any> = new Set();
-export function getChildren(node: $Node): Set<$Node> {
-	return node._children ?? empty;
-}
