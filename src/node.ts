@@ -7,12 +7,17 @@ type MetaAttributes = {
 	_disposersKeyed?: Map<string, Disposer>;
 };
 
-export type $Slot = { _slot: true } & MetaAttributes;
+export class Slot {
+	_type?: string;
+	_source?: unknown;
+}
+
+export type $Slot = Slot & MetaAttributes;
 export type $Element = Node & MetaAttributes;
 export type $Node = $Element | $Slot;
 
 export function createSlot(): $Slot {
-	return { _slot: true };
+	return new Slot();
 }
 
 export function is$Element(value: unknown): value is $Element {
@@ -20,12 +25,7 @@ export function is$Element(value: unknown): value is $Element {
 }
 
 export function is$Slot(value: unknown): value is $Slot {
-	return !!(
-		value &&
-		typeof value === "object" &&
-		"_slot" in value &&
-		value["_slot"] === true
-	);
+	return value instanceof Slot;
 }
 
 export function insert(parent: $Node, node: $Node): void {
@@ -36,13 +36,11 @@ export function insert(parent: $Node, node: $Node): void {
 		}
 		assignChild(parent, node);
 	} else if (is$Slot(parent)) {
-		console.debug("slot:insert", parent, node);
 		if (is$Element(node)) {
 			const dom_parent = getParent$Element(parent);
 			if (!dom_parent) {
 				return;
 			}
-			console.log({ dom_parent });
 
 			const result: {
 				foundSelf: boolean;
@@ -75,7 +73,6 @@ export function insert(parent: $Node, node: $Node): void {
 			}
 
 			walk(dom_parent);
-			console.log({ ...result });
 
 			if (!result.next$Element) {
 				dom_parent.appendChild(node);

@@ -85,6 +85,8 @@ function walk(node: $Node, value: unknown): void {
 		insert(node, value);
 	} else if (typeof value === "function") {
 		const slot = createSlot();
+		slot._type = "function";
+		slot._source = value;
 		insert(node, slot);
 		const value_unsafe = value as () => unknown;
 		assignDisposer(
@@ -99,6 +101,8 @@ function walk(node: $Node, value: unknown): void {
 		);
 	} else if (value instanceof Promise) {
 		const slot = createSlot();
+		slot._type = "promise";
+		slot._source = value;
 		insert(node, slot);
 		const value_unsafe = value as Promise<unknown>;
 		value_unsafe.then((result) => walk(slot, result));
