@@ -1,9 +1,9 @@
 import type { Disposer } from "./disposer.js";
-import type { ElementExtended } from "./node.js";
+import type { $Element } from "./node.js";
 import * as routing from "./routing.js";
 
 export function setElementAttribute(
-	element: ElementExtended,
+	element: $Element,
 	key: string,
 	value: unknown,
 	attributes: Record<string, unknown>,
@@ -12,7 +12,7 @@ export function setElementAttribute(
 		return;
 	}
 
-	if (key === "class") {
+	if (key === "class" && element instanceof HTMLElement) {
 		const value_unsafe = value as string;
 		element.className = value_unsafe;
 	} else if (key === "for" && element instanceof HTMLLabelElement) {
@@ -54,14 +54,14 @@ export function setElementAttribute(
 		const type_unsafe = key.substring(2) as keyof HTMLElementEventMap;
 		const value_unsafe = value as () => unknown;
 		setEventListener(element, type_unsafe, value_unsafe);
-	} else {
+	} else if (element instanceof HTMLElement) {
 		const value_safe = `${value}`;
 		element.setAttribute(key, value_safe);
 	}
 }
 
 function setEventListener<TEvent extends keyof HTMLElementEventMap>(
-	element: ElementExtended,
+	element: $Element,
 	event: TEvent,
 	callback: (this: Element, event: HTMLElementEventMap[TEvent]) => void,
 ): void {
