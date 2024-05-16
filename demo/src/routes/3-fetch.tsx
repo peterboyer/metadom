@@ -22,11 +22,9 @@ export default function Fetch(): JSX.Element {
 	};
 
 	return (
-		<div class="space-y-4">
+		<>
 			<pre>{() => JSON.stringify(state(), undefined, 2)}</pre>
-			<div>
-				<button onclick={onFetch}>fetch</button>
-			</div>
-		</div>
+			<button onclick={onFetch}>fetch</button>
+		</>
 	);
 }

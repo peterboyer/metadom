@@ -15,7 +15,7 @@ export default function Hash(): JSX.Element {
 	void disposer;
 
 	return (
-		<main class="space-y-4">
+		<>
 			<pre>
 				{() => {
 					const hashValue = hash();
@@ -51,6 +51,6 @@ export default function Hash(): JSX.Element {
 					</>
 				))}
 			</fieldset>
-		</main>
+		</>
 	);
 }

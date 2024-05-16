@@ -43,7 +43,7 @@ assignLayout(App, (_, children) => {
 					))}
 			</ul>
 			<hr />
-			<article>{children}</article>
+			<article class="space-y-4">{children}</article>
 			<hr />
 			<footer class="text-sm space-x-2">
 				<a
