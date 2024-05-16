@@ -56,6 +56,11 @@ export function insert(parent: $Node, node: $Node): void {
 				for (const child of node._children) {
 					if (child === parent) {
 						result.foundSelf = true;
+						continue;
+					}
+
+					if (is$Slot(child)) {
+						walk(child);
 					} else if (is$Element(child)) {
 						if (!result.foundSelf) {
 							result.prev$Element = child;
@@ -64,10 +69,6 @@ export function insert(parent: $Node, node: $Node): void {
 							result.next$Element = child;
 							return;
 						}
-					}
-
-					if (is$Slot(child)) {
-						walk(child);
 					}
 				}
 			}
