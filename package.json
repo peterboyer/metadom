@@ -12,6 +12,7 @@
 	"scripts": {
 		"dev": "vite --host",
 		"build": "./build.sh",
+		"preview": "vite preview --host",
 		"typecheck": "tsc"
 	},
 	"devDependencies": {
