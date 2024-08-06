@@ -8,3 +8,4 @@ export {
 } from "./jsx.js";
 export { Signal, reaction } from "./signal.js";
 export * as routing from "./routing.js";
+export { lazy } from "./lazy.js";

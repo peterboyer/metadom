@@ -1,7 +1,7 @@
 import "metadom/globals";
 
 import "./index.css";
-import { Signal, assignLayout, mount, routing } from "metadom";
+import { Signal, assignLayout, mount, reaction, routing } from "metadom";
 
 import { routes } from "./routes.js";
 import IconGithub from "./index/icon-github.svg";
@@ -9,13 +9,17 @@ import IconNpm from "./index/icon-npm.svg";
 
 const title = Signal<string | undefined>("Demo");
 
-function App(): JSX.Element {
+function* App(): JSX.Element {
+	yield reaction(title, (title) => {
+		window.document.title = title ?? "Demo";
+	});
+
 	return () => {
 		const pathname = routing.url().pathname;
 		const route = routes.get(pathname);
 		if (route) {
 			title(route.title);
-			return route.module();
+			return <route.module />;
 		}
 		title("404");
 		return <div>Not Found</div>;
@@ -25,7 +29,7 @@ function App(): JSX.Element {
 assignLayout(App, (_, children) => {
 	return (
 		<main class="m-8 space-y-4">
-			<div>metadom</div>
+			<div class="text-lg font-bold">metadom</div>
 			<hr />
 			<ul class="flex flex-wrap gap-2">
 				{Array.from(routes.entries())
