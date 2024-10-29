@@ -12,9 +12,9 @@ export class Slot {
 	_source?: unknown;
 }
 
+export type $Node = $Element | $Slot;
 export type $Slot = Slot & MetaAttributes;
 export type $Element = Node & MetaAttributes;
-export type $Node = $Element | $Slot;
 
 export function createSlot(): $Slot {
 	return new Slot();
@@ -106,4 +106,5 @@ export function assignDisposer(node: $Node, disposer: Disposer): void {
 export function assignChild(node: $Node, child: $Node): void {
 	node._children = node._children ?? new Set();
 	node._children.add(child);
+	child._parent = node;
 }

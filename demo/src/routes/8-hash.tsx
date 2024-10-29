@@ -1,18 +1,15 @@
 import { Signal, reaction } from "metadom";
 
-export default function Hash(): JSX.Element {
-	console.log("mount");
+export default function* Hash(): JSX.Element {
 	const hash = Signal<string>(location.hash.substring(1) || "aaa");
-	const disposer = reaction(
+
+	yield reaction(
 		() => hash(),
 		(value) => {
 			// TODO: update this without popstate triggering URL signal to reload routes
 			location.hash = value;
 		},
 	);
-
-	// TODO: find a way to attach this to be unmounted safely
-	void disposer;
 
 	return (
 		<>
@@ -42,7 +39,7 @@ export default function Hash(): JSX.Element {
 							{title}
 							<input
 								type="radio"
-								name={name}
+								name="radio"
 								id={`radio-${name}`}
 								value={() => hash() === name}
 								onchangevalue={() => hash(name)}

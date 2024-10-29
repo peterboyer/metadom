@@ -1,7 +1,9 @@
-import { Signal } from "metadom";
+import { Signal, reaction } from "metadom";
 
-export default function State(): JSX.Element {
+export default function* State(): JSX.Element {
 	const count = Signal(0);
+
+	yield reaction(count, console.log);
 
 	return (
 		<>

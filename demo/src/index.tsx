@@ -7,21 +7,28 @@ import { routes } from "./routes.js";
 import IconGithub from "./index/icon-github.svg";
 import IconNpm from "./index/icon-npm.svg";
 
-const title = Signal<string | undefined>("Demo");
+function* App() {
+	const currentRoute = Signal<
+		undefined | (typeof routes extends Map<unknown, infer R> ? R : never)
+	>(undefined);
 
-function* App(): JSX.Element {
-	yield reaction(title, (title) => {
-		window.document.title = title ?? "Demo";
-	});
+	yield reaction(
+		() => {
+			const pathname = routing.url().pathname;
+			const route = routes.get(pathname);
+			return route;
+		},
+		(route) => {
+			currentRoute(route);
+			window.document.title = route?.title ?? "404";
+		},
+	);
 
 	return () => {
-		const pathname = routing.url().pathname;
-		const route = routes.get(pathname);
+		const route = currentRoute();
 		if (route) {
-			title(route.title);
 			return <route.module />;
 		}
-		title("404");
 		return <div>Not Found</div>;
 	};
 }

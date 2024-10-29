@@ -20,6 +20,9 @@ export function Signal<T>(initialValue: T): Signal<T> {
 			onSignal?.(signal as Signal<unknown>);
 		} else {
 			// write
+			if (onSignal) {
+				throw new ReferenceError("Do not write inside an observed closure.");
+			}
 			const [nextValue] = args;
 			if (typeof nextValue === "function") {
 				const nextValue_unsafe = nextValue as (prevValue: T) => T;
@@ -38,6 +41,9 @@ export function Signal<T>(initialValue: T): Signal<T> {
 	return signal;
 }
 
+let balance = 0;
+let disposerId = 1;
+
 export function reaction<T>(
 	input: () => T,
 	effect?: (result: T) => void,
@@ -55,21 +61,33 @@ export function reaction<T>(
 			return;
 		}
 
-		const onSignal_reset = onSignal;
 		onSignal = (signal) => signals.add(signal);
 		const result = input();
-		onSignal = onSignal_reset;
+		onSignal = undefined;
 
 		effect?.(result);
 
 		signals.forEach((signal) => signal.callbacks.add(evaluate));
 	};
 
-	evaluate();
+	let timeout: undefined | number = setTimeout(evaluate);
 
-	return () => {
+	const disposer = () => {
+		if (timeout) {
+			clearTimeout(timeout);
+			timeout = undefined;
+		}
 		isDisposed = true;
 		signals.forEach((signal) => signal.callbacks.delete(evaluate));
 		signals.clear();
+		balance--;
+		console.debug("-", balance, disposer.id);
 	};
+
+	disposer.id = disposerId;
+	balance++;
+	disposerId++;
+	console.debug("+", balance, disposer.id, signals);
+
+	return disposer;
 }

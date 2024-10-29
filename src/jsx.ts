@@ -23,13 +23,11 @@ export function h<TTag extends Tag>(
 				const value = props_unsafe[key];
 				if (typeof value === "function" && !key.startsWith("on")) {
 					const value_unsafe = value as () => unknown;
-					assignDisposer(
-						node,
-						reaction(
-							() => value_unsafe(),
-							(value) => setElementAttribute(node, key, value, attributes),
-						),
+					const disposer = reaction(
+						() => value_unsafe(),
+						(value) => setElementAttribute(node, key, value, attributes),
 					);
+					assignDisposer(node, disposer);
 				} else {
 					setElementAttribute(node, key, value, attributes);
 				}
@@ -43,18 +41,35 @@ export function h<TTag extends Tag>(
 	}
 	if (typeof tag === "function") {
 		const props = { ...attributes, children };
+		const disposers: Disposer[] = [];
 		const value = tag(props) as ReturnType<typeof h>;
-		const Layout = typeof tag.Layout === "function" ? tag.Layout : undefined;
-		if (value instanceof Promise) {
+
+		let _children = value;
+
+		if (value && typeof value === "object" && "next" in value) {
+			const iterator = value as unknown as Iterator<unknown>;
+			let result = iterator.next();
+			while (!result.done) {
+				const disposer = result.value as Disposer;
+				disposers.push(disposer);
+				result = iterator.next();
+			}
+			_children = result.value;
+		}
+
+		if (_children instanceof Promise) {
+			// Something is leaking in here? Async is okay, but w/ Loader leaks.
 			const value_safe = value as Promise<unknown>;
 			const state = Signal_fromPromise(value_safe);
 			const Pending =
 				typeof tag.Pending === "function" ? tag.Pending : undefined;
 			const Rejected =
 				typeof tag.Rejected === "function" ? tag.Rejected : undefined;
-			const children = () => {
+
+			_children = () => {
 				const stateValue = state();
 				if (stateValue._type === "fulfilled") {
+					// This?
 					return stateValue.value;
 				} else if (stateValue._type === "pending") {
 					return Pending ? Pending(props) : undefined;
@@ -64,9 +79,13 @@ export function h<TTag extends Tag>(
 				}
 				return undefined;
 			};
-			return (Layout ? Layout(props, children) : children) as TagReturn<TTag>;
 		}
-		return (Layout ? Layout(props, value) : value) as TagReturn<TTag>;
+
+		if (typeof tag.Layout === "function") {
+			_children = tag.Layout(props, _children);
+		}
+
+		return { _component: true, children: _children, disposers };
 	}
 	return undefined as TagReturn<TTag>;
 }
@@ -92,19 +111,31 @@ function walk(node: $Node, value: unknown): void {
 			slot,
 			reaction(
 				() => value_unsafe(),
-				(value) => walk(slot, value),
-				() => slot._children?.forEach(unmount),
+				(value) => {
+					slot._children?.forEach(unmount);
+					walk(slot, value);
+				},
 			),
 		);
-	} else if (value instanceof Promise) {
+	} else if (value && typeof value == "object" && "_component" in value) {
 		const slot = createSlot();
-		slot._type = "promise";
+		slot._type = "component";
 		slot._source = value;
 		insert(node, slot);
-		const value_unsafe = value as Promise<unknown>;
-		value_unsafe.then((result) => walk(slot, result));
+		const value_unsafe = value as { children: unknown; disposers?: Disposer[] };
+		walk(slot, value_unsafe.children);
+		value_unsafe.disposers?.forEach((disposer) => {
+			assignDisposer(slot, disposer);
+		});
+	} else if (value instanceof Promise) {
+		// const slot = createSlot();
+		// slot._type = "promise";
+		// slot._source = value;
+		// insert(node, slot);
+		// const value_unsafe = value as Promise<unknown>;
+		// value_unsafe.then((result) => walk(slot, result));
 	} else if (value && typeof value === "object" && "default" in value) {
-		walk(node, value.default);
+		// walk(node, value.default);
 	}
 }
 
@@ -135,16 +166,16 @@ export function mount(
 }
 
 function unmount(node: $Node) {
-	node._parent?._children?.delete(node);
-	if (is$Element(node) && node.parentNode) {
-		node.parentNode.removeChild(node);
-	}
-	node._children?.forEach(unmount);
-	node._children = undefined;
 	node._disposers?.forEach((disposer) => disposer());
 	node._disposers = undefined;
 	node._disposersKeyed?.forEach((disposer) => disposer());
 	node._disposersKeyed = undefined;
+	node._children?.forEach(unmount);
+	node._children = undefined;
+	node._parent?._children?.delete(node);
+	if (is$Element(node) && node.parentNode) {
+		node.parentNode.removeChild(node);
+	}
 }
 
 export function assignLayout<TComponent extends (...args: any[]) => any>(
