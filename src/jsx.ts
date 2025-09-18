@@ -85,7 +85,7 @@ export function h<TTag extends Tag>(
 			_children = tag.Layout(props, _children);
 		}
 
-		return { _component: true, children: _children, disposers };
+		return { _component: true, children: _children, disposers } as any;
 	}
 	return undefined as TagReturn<TTag>;
 }
@@ -122,7 +122,10 @@ function walk(node: $Node, value: unknown): void {
 		slot._type = "component";
 		slot._source = value;
 		insert(node, slot);
-		const value_unsafe = value as { children: unknown; disposers?: Disposer[] };
+		const value_unsafe = value as unknown as {
+			children: unknown;
+			disposers?: Disposer[];
+		};
 		walk(slot, value_unsafe.children);
 		value_unsafe.disposers?.forEach((disposer) => {
 			assignDisposer(slot, disposer);
