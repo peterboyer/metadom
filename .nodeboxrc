@@ -1,3 +1,2 @@
-node:20
 PORT=3000 vite
-PORT=3000 yarn dev
+PORT=3000 dev
