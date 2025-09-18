@@ -1,9 +1,9 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"extends": ["./tsconfig.base.json"],
-	"include": ["src", "src/globals.ts", "src/config/vite.ts"],
+	"include": ["./src", "./src/globals.ts", "./src/config/vite.ts"],
 	"compilerOptions": {
-		"outDir": "dist",
+		"outDir": "./dist",
 		"declaration": true
 	}
 }
