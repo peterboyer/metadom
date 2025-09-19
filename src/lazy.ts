@@ -1,3 +1,5 @@
+import { h } from "./jsx.js";
+
 export function lazy(
 	callback: () => Promise<unknown>,
 ): () => Promise<JSX.Element> {
@@ -8,6 +10,6 @@ export function lazy(
 			Component = ((await callback()) as { default: () => JSX.Element })
 				.default;
 		}
-		return <Component />;
+		return h(Component, {});
 	};
 }
