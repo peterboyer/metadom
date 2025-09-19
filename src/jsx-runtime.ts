@@ -64,7 +64,9 @@ export namespace JSX {
 
 interface ElementAttributes
 	extends ElementBaseAttributes,
-		ElementEventAttributes {}
+		ElementEventAttributes {
+	children?: unknown;
+}
 
 type ElementBaseAttributes = {
 	id?: string;
