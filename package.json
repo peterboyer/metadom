@@ -1,4 +1,5 @@
 {
+	"$schema": "https://json.schemastore.org/package",
 	"name": "metadom",
 	"version": "0.1.0",
 	"description": "Meta-DOM. Signal-driven, declarative UI.",
